@@ -152,5 +152,5 @@ class JSON_API_Query {
       return 'error';
     }
   }
-
+  
 }

@@ -69,32 +69,33 @@ class JSON_API_Introspector {
       if ($wp_category->term_id == 1 && $wp_category->slug == 'uncategorized') {
         continue;
       }
-      $categories[] = $this->get_category($wp_category);
+      $categories[] = $this->get_category_object($wp_category);
     }
     return $categories;
   }
   
-  function get_category($arg) {
-    if (is_object($arg)) {
-      return new JSON_API_Category($arg);
-    } else if (is_numeric($arg)) {
-      $wp_category = get_term_by('id', $arg, 'category');
-      return $this->get_category($wp_category);
-    } else if (is_string($arg)) {
-      $wp_category = get_term_by('slug', $arg, 'category');
-      return $this->get_category($wp_category);
-    } else {
-      return null;
-    }
-  }
-  
   function get_current_category() {
     global $json_api;
-    $category = $json_api->query->category_id;
-    if (empty($category)) {
-      $category = $json_api->query->category_slug;
+    if (!empty($json_api->query->category_id)) {
+      return $this->get_category_by_id($json_api->query->category_id);
+    } else if (!empty($json_api->query->category_slug)) {
+      return $this->get_category_by_slug($json_api->query->category_slug);
     }
-    return $this->get_category($category);
+    return null;
+  }
+  
+  function get_category_object($wp_category) {
+    return new JSON_API_Category($wp_category);
+  }
+  
+  function get_category_by_id($category_id) {
+    $wp_category = get_term_by('id', $category_id, 'category');
+    return $this->get_category_object($wp_category);
+  }
+  
+  function get_category_by_slug($category_slug) {
+    $wp_category = get_term_by('slug', $category_slug, 'category');
+    return $this->get_category_object($wp_category);
   }
   
   function get_tags() {
@@ -102,27 +103,28 @@ class JSON_API_Introspector {
     return array_map(array(&$this, 'get_tag'), $wp_tags);
   }
   
-  function get_tag($arg) {
-    if (is_object($arg)) {
-      return new JSON_API_Tag($arg);
-    } else if (is_numeric($arg)) {
-      $wp_tag = get_term_by('id', $arg, 'post_tag');
-      return $this->get_tag($wp_tag);
-    } else if (is_string($arg)) {
-      $wp_tag = get_term_by('slug', $arg, 'post_tag');
-      return $this->get_tag($wp_tag);
-    } else {
-      return null;
-    }
-  }
-  
   function get_current_tag() {
     global $json_api;
-    $tag = $json_api->query->tag_id;
-    if (empty($tag)) {
-      $tag = $json_api->query->tag_slug;
+    if (!empty($json_api->query->tag_id)) {
+      return $this->get_tag_by_id($json_api->query->tag_id);
+    } else if (!empty($json_api->query->tag_slug)) {
+      return $this->get_tag_by_slug($json_api->query->tag_slug);
     }
-    return $this->get_tag($tag);
+    return null;
+  }
+  
+  function get_tag_object($wp_tag) {
+    return new JSON_API_Tag($wp_tag);
+  }
+  
+  function get_tag_by_id($tag_id) {
+    $wp_tag = get_term_by('id', $tag_id, 'post_tag');
+    return $this->get_tag_object($wp_tag);
+  }
+  
+  function get_tag_by_slug($tag_slug) {
+    $wp_tag = get_term_by('slug', $tag_slug, 'post_tag');
+    return $this->get_tag_object($wp_tag);
   }
   
   function get_authors() {

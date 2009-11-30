@@ -21,6 +21,7 @@ class JSON_API_Response {
     global $wp_query;
     return $this->get_json(array(
       'count' => count($posts),
+      'count_total' => $wp_query->found_posts,
       'pages' => $wp_query->max_num_pages,
       'posts' => $posts
     ), $status);
@@ -46,6 +47,8 @@ class JSON_API_Response {
       $data = array_merge(array('status' => $status), $data);
     }
     
+    $data = apply_filters('json_api_encode', $data);
+    
     if (!empty($_REQUEST['dev'])) {
       // Don't JSON encode the data in dev mode
       return $data;
@@ -54,8 +57,10 @@ class JSON_API_Response {
       return json_encode($data);
     } else {
       // Use PEAR's Services_JSON encoder otherwise
-      global $json_api_dir;
-      require_once "$json_api_dir/library/JSON.php";
+      if (!class_exists('Services_JSON')) {
+        global $json_api_dir;
+        require_once "$json_api_dir/library/JSON.php";
+      }
       $json = new Services_JSON();
       return $json->encode($data);
     }

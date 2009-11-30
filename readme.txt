@@ -1,6 +1,6 @@
 === JSON API ===
 Contributors: dphiffer
-Tags: json, api, ajax, cms, admin, integration
+Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
 Tested up to: 2.8
 Stable tag: 0.5
@@ -60,6 +60,7 @@ Here is an example response from `http://localhost/wordpress/?json=1` called on 
     {
       "status": "ok",
       "count": 1,
+      "count_total": 1,
       "pages": 1,
       "posts": [
         {
@@ -106,6 +107,7 @@ The JSON API reference is split into four sections:
 
 1. Request arguments
 1. Response objects
+1. Plugin hooks
 1. Introspection methods
 1. Data manipulation methods
 
@@ -213,7 +215,33 @@ For example calling an API method with `redirect` set to `http://www.example.com
 
 You can also set separate URLs to handle status values differently. You could set `redirect_ok` to `http://www.example.com/handle_ok` and `redirect_error` to `http://www.example.com/handle_error` in order to have more fine-tuned control over the method result.
 
-== 3. Introspection methods ==
+== 3. Plugin hooks ==
+
+JSON API currently exposes a single [filter hook](http://codex.wordpress.org/Plugin_API#Hooks.2C_Actions_and_Filters) for you to modify the output.
+
+== Filter: json_api_encode ==
+
+This is called just before the output is encoded into JSON format. The value passed will always be an associative array, according to the format described in each method's documentation. Those items described in the *Response objects* section are passed as PHP objects, not associative arrays.
+
+__Example:__
+
+    add_filter('json_api_encode', 'encode_kittens_field');
+    
+    encode_kittens_field($response) {
+      if (isset($response['posts'])) {
+        array_walk($response['posts'], 'add_kittens_field');
+      } else if (isset($response['post'])) {
+        add_kittens_field($response['post']);
+      }
+      return $response;
+    }
+    
+    add_kittens_field(&$post) {
+      $post->kittens = 'Kittens!';
+    }
+
+
+== 4. Introspection methods ==
 
 Introspection methods are used to retrieve data from WordPress.
 
@@ -231,6 +259,7 @@ __Response__
     {
       "status": "ok",
       "count": 10,
+      "count_total": 79,
       "pages": 7,
       "posts": [
         { ... },
@@ -293,6 +322,7 @@ __Response__
     {
       "status": "ok",
       "count": 10,
+      "count_total": 79,
       "pages": 7,
       "posts": [
         { ... },
@@ -320,6 +350,7 @@ __Response__
     {
       "status": "ok",
       "count": 10,
+      "count_total": 79,
       "pages": 7,
       "category": { ... }
       "posts": [
@@ -349,6 +380,7 @@ __Response__
     {
       "status": "ok",
       "count": 10,
+      "count_total": 79,
       "pages": 7,
       "tag": { ... }
       "posts": [
@@ -378,12 +410,13 @@ __Response__
     {
       "status": "ok",
       "count": 10,
+      "count_total": 79,
       "pages": 7,
       "author": { ... }
       "posts": [
         { ... },
         { ... },
-        { ... }
+        ...
       ]
     }
 
@@ -406,6 +439,7 @@ __Response__
     {
       "status": "ok",
       "count": 10,
+      "count_total": 79,
       "pages": 7,
       "posts": [
         { ... },
@@ -490,7 +524,7 @@ __Response__
     }
 
 
-== 4. Data manipulation methods ==
+== 5. Data manipulation methods ==
 
 Data manipulation methods are used for saving content back to WordPress.
 
@@ -522,6 +556,11 @@ __Custom status values__
 
 
 == Changelog ==
+
+= 0.6 (2009-11-30): =
+* Added `count_total` response
+* Added `json_api_encode` filter
+* Fixed bugs in the introspector's `get_current_category` and `get_current_tag`
 
 = 0.5 (2009-11-17): =
 * Initial Public Release
