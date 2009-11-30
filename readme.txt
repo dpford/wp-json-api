@@ -3,7 +3,7 @@ Contributors: dphiffer
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
 Tested up to: 2.8
-Stable tag: 0.5
+Stable tag: 0.6
 
 A RESTful API for WordPress
 
