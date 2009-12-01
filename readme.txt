@@ -33,19 +33,19 @@ JSON API operates in two modes:
 1. *Implicit mode* is triggered by setting the `json` query var to a non-empty value on any WordPress page. The content that would normally appear on that page is returned in JSON format.
 1. *Explicit mode* is triggered by setting `json` to a known method string. See the *API Reference* section below for a complete method listing.
 
-__Implicit mode examples:__
+= Implicit mode examples: =
 
  * `http://www.example.org/?json=1`
  * `http://www.example.org/?p=47&json=1`
  * `http://www.example.org/tag/banana/?json=1`
    
-__Explicit mode examples:__
+= Explicit mode examples: =
 
 * `http://www.example.org/?json=get_recent_posts`
 * `http://www.example.org/?json=get_post&post_id=47`
 * `http://www.example.org/?json=get_tag_posts&tag_slug=banana`
 
-__With user-friendly permalinks configured:__
+= With user-friendly permalinks configured: =
 
 * `http://www.example.org/api/get_recent_posts/`
 * `http://www.example.org/api/get_post/?post_id=47`
@@ -223,7 +223,7 @@ JSON API currently exposes a single [filter hook](http://codex.wordpress.org/Plu
 
 This is called just before the output is encoded into JSON format. The value passed will always be an associative array, according to the format described in each method's documentation. Those items described in the *Response objects* section are passed as PHP objects, not associative arrays.
 
-__Example:__
+= Example =
 
     add_filter('json_api_encode', 'encode_kittens_field');
     
@@ -250,11 +250,11 @@ Introspection methods are used to retrieve data from WordPress.
 
 Returns an array of recent posts. You can invoke this from the WordPress home page either by setting `json` to a non-empty value (i.e., `json=1`) or from any page by setting `json=get_recent_posts`.
 
-__Optional arguments__
+= Optional arguments =
 
 * `page` - return a specific page number from the results
 
-__Response__
+= Response =
 
     {
       "status": "ok",
@@ -273,13 +273,13 @@ __Response__
 
 Returns a single post object.
 
-__One of the following is required__
+= One of the following is required =
 
 * Invoking the JSON API implicitly (i.e., `?json=1`) on a post URL
 * `post_id` - set to the post's ID
 * `post_slug` - set to the post's URL slug
 
-__Response__
+= Response =
 
     {
       "status": "ok",
@@ -291,13 +291,13 @@ __Response__
 
 Returns a single page object.
 
-__One of the following is required__
+= One of the following is required =
 
 * Invoking the JSON API implicitly (i.e., `?json=1`) on a page URL
 * `page_id` - set to the page's ID
 * `page_slug` - set to the page's URL slug
 
-__Response__
+= Response =
 
     {
       "status": "ok",
@@ -308,16 +308,16 @@ __Response__
 
 Returns an array of posts/pages in a specific category.
 
-__One of the following is required__
+= One of the following is required =
 
 * Invoking the JSON API implicitly (i.e., `?json=1`) on a date archive page
 * `date` - set to a date in the format `YYYY` or `YYYYMM` or `YYYYMMDD`
 
-__Optional arguments__
+= Optional arguments =
 
 * `page` - return a specific page number from the results
 
-__Response__
+= Response =
 
     {
       "status": "ok",
@@ -335,17 +335,17 @@ __Response__
 
 Returns an array of posts/pages in a specific category.
 
-__One of the following is required__
+= One of the following is required =
 
 * Invoking the JSON API implicitly (i.e., `?json=1`) on a category archive page
 * `category_id` - set to the category's ID
 * `category_slug` - set to the category's URL slug
 
-__Optional arguments__
+= Optional arguments =
 
 * `page` - return a specific page number from the results
 
-__Response__
+= Response =
 
     {
       "status": "ok",
@@ -365,17 +365,17 @@ __Response__
 
 Returns an array of posts/pages with a specific tag.
 
-__One of the following is required__
+= One of the following is required =
 
 * Invoking the JSON API implicitly (i.e., `?json=1`) on a tag archive page
 * `tag_id` - set to the tag's ID
 * `tag_slug` - set to the tag's URL slug
 
-__Optional arguments__
+= Optional arguments =
 
 * `page` - return a specific page number from the results
 
-__Response__
+= Response =
 
     {
       "status": "ok",
@@ -395,17 +395,17 @@ __Response__
 
 Returns an array of posts/pages written by a specific author.
 
-__One of the following is required__
+= One of the following is required =
 
 * Invoking the JSON API implicitly (i.e., `?json=1`) on an author archive page
 * `author_id` - set to the author's ID
 * `author_slug` - set to the author's URL slug
 
-__Optional arguments__
+= Optional arguments =
 
 * `page` - return a specific page number from the results
 
-__Response__
+= Response =
 
     {
       "status": "ok",
@@ -425,16 +425,16 @@ __Response__
 
 Returns an array of posts/pages in response to a search query.
 
-__One of the following is required__
+= One of the following is required =
 
 * Invoking the JSON API implicitly (i.e., `?json=1`) on a search results page
 * `search` - set to the desired search query
 
-__Optional arguments__
+= Optional arguments =
 
 * `page` - return a specific page number from the results
 
-__Response__
+= Response =
 
     {
       "status": "ok",
@@ -453,7 +453,7 @@ __Response__
 
 Returns both an array of date page permalinks and a tree structure representation of the archive.
 
-__Response__
+= Response =
 
     {
       "status": "ok",
@@ -477,7 +477,7 @@ Note: the tree is arranged by `response.tree.[year].[month].[number of posts]`.
 
 Returns an array of active categories.
 
-__Response__
+= Response =
 
     {
       "status": "ok",
@@ -494,7 +494,7 @@ __Response__
 
 Returns an array of active tags.
 
-__Response__
+= Response =
 
     {
       "status": "ok",
@@ -511,7 +511,7 @@ __Response__
 
 Returns an array of active blog authors.
 
-__Response__
+= Response =
 
     {
       "status": "ok",
@@ -536,21 +536,21 @@ The data manipulation methods are still very incomplete.
 
 Submits a comment to a WordPress post.
 
-__Required arguments__
+= Required arguments =
 
 * `post_id` - which post to comment on
 * `name` - the commenter's name
 * `email` - the commenter's email address
 * `content` - the comment content
 
-__Optional arguments__
+= Optional arguments =
 
 * `redirect` - redirect instead of returning a JSON object
 * `redirect_ok` - redirect to a specific URL when the status value is `ok`
 * `redirect_error` - redirect to a specific URL when the status value is `error`
 * `redirect_pending` - redirect to a specific URL when the status value is `pending`
 
-__Custom status values__
+= Custom status values =
 
 * `pending` - assigned if the comment submission is pending moderation
 

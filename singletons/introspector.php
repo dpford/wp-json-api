@@ -100,7 +100,7 @@ class JSON_API_Introspector {
   
   function get_tags() {
     $wp_tags = get_tags();
-    return array_map(array(&$this, 'get_tag'), $wp_tags);
+    return array_map(array(&$this, 'get_tag_object'), $wp_tags);
   }
   
   function get_current_tag() {
