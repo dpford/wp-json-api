@@ -146,7 +146,7 @@ All JSON API requests result in a status value. The two basic status values are 
 __Naming compatibility__  
 Developers familiar with WordPress may notice that many names for properties and arguments have been changed. This was a stylistic choice that intends to provide more clarity and consistency in the interface.
 
-== Post response object ==
+= Post response object =
 
 * `id` - Integer
 * `slug` - String
@@ -165,7 +165,7 @@ Developers familiar with WordPress may notice that many names for properties and
 * `comment_status` - String (`"open"` or `"closed"`)
 * `custom_fields` - Object (included by setting the `custom_fields` argument to a comma-separated list of custom field names)
 
-== Category response object ==
+= Category response object =
 
 * `id` - Integer
 * `slug` - String
@@ -174,14 +174,14 @@ Developers familiar with WordPress may notice that many names for properties and
 * `parent` - Integer
 * `post_count` - Integer
 
-== Tag response object ==
+= Tag response object =
 
 * `id` - Integer
 * `slug` - String
 * `title` - String
 * `description` - String
 
-== Author response object ==
+= Author response object =
 
 * `id` - Integer
 * `slug` - String
