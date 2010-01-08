@@ -129,7 +129,14 @@ class JSON_API_Introspector {
   
   function get_authors() {
     global $wpdb;
-    $author_ids = $wpdb->get_col($wpdb->prepare("SELECT ID FROM $wpdb->users"));
+    $author_ids = $wpdb->get_col($wpdb->prepare("
+      SELECT u.ID, m.meta_value AS last_name
+      FROM $wpdb->users AS u,
+           $wpdb->usermeta AS m
+      WHERE m.user_id = u.ID
+        AND m.meta_key = 'last_name'
+      ORDER BY last_name
+    "));
     $all_authors = array_map(array(&$this, 'get_author'), $author_ids);
     $active_authors = array_filter($all_authors, array(&$this, 'is_active_author'));
     return $active_authors;
@@ -147,8 +154,9 @@ class JSON_API_Introspector {
   function is_active_author($author) {
     if (!isset($this->active_authors)) {
       $this->active_authors = explode(',', wp_list_authors('html=0&echo=0'));
+      $this->active_authors = array_map('trim', $this->active_authors);
     }
-    return in_array($author->slug, $this->active_authors);
+    return in_array($author->name, $this->active_authors);
   }
   
   function set_posts_query($query = '') {

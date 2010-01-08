@@ -3,7 +3,7 @@ Contributors: dphiffer
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
 Tested up to: 2.8
-Stable tag: 0.6
+Stable tag: 0.7
 
 A RESTful API for WordPress
 
@@ -180,6 +180,7 @@ Developers familiar with WordPress may notice that many names for properties and
 * `slug` - String
 * `title` - String
 * `description` - String
+* `post_count` - Integer
 
 = Author response object =
 
@@ -556,6 +557,10 @@ Submits a comment to a WordPress post.
 
 
 == Changelog ==
+
+= 0.7 (2010-01-08): =
+* Added a `post_count` response to tag objects
+* Fixed a bug with `get_author_index`
 
 = 0.6 (2009-11-30): =
 * Added `count_total` response

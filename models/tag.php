@@ -18,6 +18,7 @@ class JSON_API_Tag {
     $this->slug = $wp_tag->slug;
     $this->title = $wp_tag->name;
     $this->description = $wp_tag->description;
+    $this->post_count = (int) $wp_tag->count;
   }
   
 }
