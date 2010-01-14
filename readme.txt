@@ -3,7 +3,7 @@ Contributors: dphiffer
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
 Tested up to: 2.8
-Stable tag: 0.7.1
+Stable tag: 0.7.2
 
 A RESTful API for WordPress
 
@@ -11,7 +11,7 @@ A RESTful API for WordPress
 
 This plugin was created for The Museum of Modern Art, whose weblog [Inside/Out](http://moma.org/explore/inside_out) appears within an existing structure built with Ruby on Rails. Instead of reimplementing the site templates as a WordPress theme, we opted for a Rails front-end that displays content served from a WordPress back-end. JSON API provides the necessary interface for retrieving content and accepting comment submissions.
 
-The current release (0.6) implements a mostly-complete set of introspection methods and a method for submitting comments. I plan on offering a complete set of authentication & data manipulation methods, but my current focus is on features we're actually using at MoMA.org.
+The current release implements a mostly-complete set of introspection methods and a method for submitting comments. I plan on offering a complete set of authentication & data manipulation methods, but my current focus is on features we're actually using at MoMA.org.
 
 See the Other Notes section for complete API documentation.
 
@@ -557,6 +557,9 @@ Submits a comment to a WordPress post.
 
 
 == Changelog ==
+
+= 0.7.2 (2010-01-14): =
+* Removed the version number from the description text
 
 = 0.7.1 (2010-01-14): =
 * Fixed another subtle bug with `get_author_index`
