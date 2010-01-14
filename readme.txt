@@ -3,7 +3,7 @@ Contributors: dphiffer
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
 Tested up to: 2.8
-Stable tag: 0.7
+Stable tag: 0.7.1
 
 A RESTful API for WordPress
 
@@ -557,6 +557,9 @@ Submits a comment to a WordPress post.
 
 
 == Changelog ==
+
+= 0.7.1 (2010-01-14): =
+* Fixed another subtle bug with `get_author_index`
 
 = 0.7 (2010-01-08): =
 * Added a `post_count` response to tag objects

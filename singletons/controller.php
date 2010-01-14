@@ -190,7 +190,7 @@ class JSON_API_Controller {
     $authors = $this->introspector->get_authors();
     return $this->response->get_json(array(
       'count' => count($authors),
-      'authors' => $authors
+      'authors' => array_values($authors)
     ));
   }
   
