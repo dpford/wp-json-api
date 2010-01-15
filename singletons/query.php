@@ -23,6 +23,7 @@ class JSON_API_Query {
     'dev',           // Triggers a developer-friendly print_r() output
     'redirect',      // Triggers a redirect response to the specified URL
     'page',          // Returns a specific page of results
+    'count',         // Controls the number of posts returned
     'post_id',       // Used by the get_post API method
     'post_slug',     // Used by the get_post API method
     'page_id',       // Used by the get_page API method

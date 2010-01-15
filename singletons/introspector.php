@@ -165,6 +165,10 @@ class JSON_API_Introspector {
       $amp = empty($query) ? '' : '&';
       $query .= "{$amp}paged=" . get_query_var('page');
     }
+    if (get_query_var('count')) {
+      $amp = empty($query) ? '' : '&';
+      $query .= "{$amp}posts_per_page=" . get_query_var('count');
+    }
     if (!empty($query)) {
       query_posts($query);
     }

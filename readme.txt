@@ -2,8 +2,8 @@
 Contributors: dphiffer
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
-Tested up to: 2.8
-Stable tag: 0.7.2
+Tested up to: 2.9
+Stable tag: 0.7.3
 
 A RESTful API for WordPress
 
@@ -132,6 +132,7 @@ These arguments are available to modify all introspection methods:
 * `exclude` - Specifies which post data fields to exclude. Expects a comma-separated list of post fields.
 * `custom_fields` - Includes values from posts' Custom Fields. Expects a comma-separated list of custom field keys.
 * `author_meta` - Includes additional author metadata. Should be a comma-separated list of metadata fields.
+* `count` - Controls the number of posts to include (defaults to the number specified by WordPress)
 
 __About `include`/`exclude` arguments__  
 By default you get all values included with each post object. Specify a list of `include` values will cause the post object to filter out the values absent from the list. Specifying `exclude` causes post objects to include all values except the fields you list. For example, the query `exclude=comments` includes everything *except* the comments.
@@ -557,6 +558,9 @@ Submits a comment to a WordPress post.
 
 
 == Changelog ==
+
+= 0.7.3 (2010-01-15): =
+* Added a `count` request parameter to control the number of posts returned
 
 = 0.7.2 (2010-01-14): =
 * Removed the version number from the description text
