@@ -18,6 +18,7 @@ class JSON_API_Post {
   var $tags;            // Array of objects
   var $author;          // Object
   var $comments;        // Array of objects
+  var $attachments;     // Array of objects
   var $comment_count;   // Integer
   var $comment_status;  // String ("open" or "closed")
   var $custom_fields;   // Object (included by using custom_fields query var)
@@ -38,6 +39,7 @@ class JSON_API_Post {
     $this->set_tags_value();
     $this->set_author_value();
     $this->set_comments_value();
+    $this->set_attachments_value();
     $this->set_value('comment_count', (int) $post->comment_count);
     $this->set_value('comment_status', $post->comment_status);
     $this->set_custom_fields_value();
@@ -102,6 +104,13 @@ class JSON_API_Post {
     global $json_api;
     if ($json_api->include_value('comments')) {
       $this->comments = $json_api->introspector->get_comments($this->id);
+    }
+  }
+  
+  function set_attachments_value() {
+    global $json_api;
+    if ($json_api->include_value('attachments')) {
+      $this->attachments = $json_api->introspector->get_attachments($this->id);
     }
   }
   

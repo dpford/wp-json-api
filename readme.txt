@@ -3,7 +3,7 @@ Contributors: dphiffer
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
 Tested up to: 2.9
-Stable tag: 0.7.3
+Stable tag: 0.8
 
 A RESTful API for WordPress
 
@@ -162,6 +162,7 @@ Developers familiar with WordPress may notice that many names for properties and
 * `tags` - Array of tag objects
 * `author` Author object
 * `comments` - Array of comment objects
+* `attachments` - Array of attachment objects
 * `comment_count` - Integer
 * `comment_status` - String (`"open"` or `"closed"`)
 * `custom_fields` - Object (included by setting the `custom_fields` argument to a comma-separated list of custom field names)
@@ -196,7 +197,7 @@ Developers familiar with WordPress may notice that many names for properties and
   
 Note: You can include additional values by setting the `author_meta` argument to a comma-separated list of metadata fields.
 
-== Comment response object ==
+= Comment response object =
 
 * `id` - Integer
 * `name` - String
@@ -205,6 +206,18 @@ Note: You can include additional values by setting the `author_meta` argument to
 * `content` - String
 * `parent` - Integer
 * `author` - Object (only set if the comment author was registered & logged in)
+
+= Attachment response object =
+
+* `id` - Integer
+* `url` - String
+* `slug` - String
+* `title` - String
+* `description` - String
+* `caption` - String
+* `parent` - Integer
+* `mime_type` - String
+* `images` - Object with values `thumbnail`, `medium`, `large`, `full`, each of which are objects with values `url`, `width` and `height` (only set if the attachment is an image)
 
 == Redirects ==
 
@@ -559,6 +572,9 @@ Submits a comment to a WordPress post.
 
 == Changelog ==
 
+= 0.8 (2010-01-18): =
+* Added an attachment model and instance variable for post objects
+
 = 0.7.3 (2010-01-15): =
 * Added a `count` request parameter to control the number of posts returned
 
@@ -579,3 +595,8 @@ Submits a comment to a WordPress post.
 
 = 0.5 (2009-11-17): =
 * Initial Public Release
+
+== Upgrade Notice ==
+
+= 0.8 =
+Added what may be the last introspection feature: post attachments. You can now see images and other media that have been added to posts.

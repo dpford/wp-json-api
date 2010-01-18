@@ -45,6 +45,7 @@ class JSON_API_Controller {
     require_once "$json_api_dir/models/category.php";
     require_once "$json_api_dir/models/tag.php";
     require_once "$json_api_dir/models/author.php";
+    require_once "$json_api_dir/models/attachment.php";
   }
   
   function error($message, $status = 'error') {

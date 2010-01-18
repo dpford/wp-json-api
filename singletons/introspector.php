@@ -191,6 +191,17 @@ class JSON_API_Introspector {
     return $comments;
   }
   
+  function get_attachments($post_id) {
+    $wp_attachments = get_children("post_type=attachment&post_parent=$post_id");
+    $attachments = array();
+    if (!empty($wp_attachments)) {
+      foreach ($wp_attachments as $wp_attachment) {
+        $attachments[] = new JSON_API_Attachment($wp_attachment);
+      }
+    }
+    return $attachments;
+  }
+  
 }
 
 ?>
