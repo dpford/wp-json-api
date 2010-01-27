@@ -3,7 +3,7 @@ Contributors: dphiffer
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
 Tested up to: 2.9
-Stable tag: 0.8.1
+Stable tag: 0.8.3
 
 A RESTful API for WordPress
 
@@ -572,6 +572,9 @@ Submits a comment to a WordPress post.
 
 == Changelog ==
 
+= 0.8.3 (2010-01-27): =
+* Fixed the stable tag version
+
 = 0.8.2 (2010-01-27): =
 * Fixed a typo in the changelog
 
@@ -612,3 +615,6 @@ This is a bug fix release for JSONP support. Thanks to Ben Wilson for reporting 
 
 = 0.8.2 =
 Just fixing a mislabeled 0.8.1 release in the changelog.
+
+= 0.8.3 =
+Oh dear, I didn't tag 0.8.2 in the stable tags thing.
