@@ -572,7 +572,10 @@ Submits a comment to a WordPress post.
 
 == Changelog ==
 
-= 0.8 (2010-01-27): =
+= 0.8.2 (2010-01-27): =
+* Fixed a typo in the changelog
+
+= 0.8.1 (2010-01-27): =
 * Fixed a bug that was making JSONP support non-functional
 
 = 0.8 (2010-01-18): =
@@ -606,3 +609,6 @@ Added what may be the last introspection feature: post attachments. You can now 
 
 = 0.8.1 =
 This is a bug fix release for JSONP support. Thanks to Ben Wilson for reporting it!
+
+= 0.8.2 =
+Just fixing a mislabeled 0.8.1 release in the changelog.
