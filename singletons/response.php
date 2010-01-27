@@ -90,7 +90,7 @@ class JSON_API_Response {
       wp_redirect($url);
     } else if ($json_api->query->callback) {
       // Run a JSONP-style callback with the result
-      $this->callback($this->query->callback, $result);
+      $this->callback($json_api->query->callback, $result);
     } else {
       // Output the result in JSON format
       $this->output($result);

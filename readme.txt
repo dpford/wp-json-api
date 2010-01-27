@@ -3,7 +3,7 @@ Contributors: dphiffer
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
 Tested up to: 2.9
-Stable tag: 0.8
+Stable tag: 0.8.1
 
 A RESTful API for WordPress
 
@@ -572,6 +572,9 @@ Submits a comment to a WordPress post.
 
 == Changelog ==
 
+= 0.8 (2010-01-27): =
+* Fixed a bug that was making JSONP support non-functional
+
 = 0.8 (2010-01-18): =
 * Added an attachment model and instance variable for post objects
 
@@ -600,3 +603,6 @@ Submits a comment to a WordPress post.
 
 = 0.8 =
 Added what may be the last introspection feature: post attachments. You can now see images and other media that have been added to posts.
+
+= 0.8.1 =
+This is a bug fix release for JSONP support. Thanks to Ben Wilson for reporting it!
