@@ -19,6 +19,9 @@ class JSON_API_Controller {
       $this->setup();
       $this->query->setup();
       
+      // Run Plugin hooks for method
+      do_action("json_api_$method");
+      
       // Run the method
       $result = $this->$method();
       
@@ -195,14 +198,20 @@ class JSON_API_Controller {
     ));
   }
   
+  function create_post() {
+    nocache_headers();
+    $post = new JSON_API_Post();
+    $id = $post->create($_REQUEST);
+    if (empty($id)) {
+      $this->error("Could not create post.");
+    }
+    return $this->response->get_json(array(
+      'post' => $post
+    ));
+  }
+  
   function submit_comment() {
     nocache_headers();
-    $required = array(
-      'post_id',
-      'name',
-      'email',
-      'content'
-    );
     if (empty($_REQUEST['post_id'])) {
       $this->error("No post specified. Include 'post_id' var in your request.");
     } else if (empty($_REQUEST['name']) ||

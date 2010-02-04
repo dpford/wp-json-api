@@ -3,7 +3,7 @@ Contributors: dphiffer
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
 Tested up to: 2.9
-Stable tag: 0.8.3
+Stable tag: 0.9
 
 A RESTful API for WordPress
 
@@ -547,6 +547,21 @@ __Incomplete__
 The data manipulation methods are still very incomplete.
 
 
+== Method: create_post ==
+
+Creates a new post.
+
+= Optional arguments =
+
+* `status` - sets the post status ("draft" or "publish"), default is "draft"
+* `title` - the post title
+* `content` - the post content
+* `author` - the post's author (login name), default is the current logged in user
+* `categories` - a comma-separated list of categories (URL slugs)
+* `tags` - a comma-separated list of tags (URL slugs)
+
+Note: including a file upload field called `attachment` will cause an attachment to be stored with your new post.
+
 == Method: submit_comment ==
 
 Submits a comment to a WordPress post.
@@ -571,6 +586,9 @@ Submits a comment to a WordPress post.
 
 
 == Changelog ==
+
+= 0.9 (2010-02-04): =
+* Added a `create_post` method
 
 = 0.8.3 (2010-01-27): =
 * Fixed the stable tag version
@@ -607,14 +625,17 @@ Submits a comment to a WordPress post.
 
 == Upgrade Notice ==
 
-= 0.8 =
-Added what may be the last introspection feature: post attachments. You can now see images and other media that have been added to posts.
+= 0.9 =
+Added a new data manipulation method: `create_post`.
 
-= 0.8.1 =
-This is a bug fix release for JSONP support. Thanks to Ben Wilson for reporting it!
+= 0.8.3 =
+Oh dear, I didn't tag 0.8.2 in the stable tags thing.
 
 = 0.8.2 =
 Just fixing a mislabeled 0.8.1 release in the changelog.
 
-= 0.8.3 =
-Oh dear, I didn't tag 0.8.2 in the stable tags thing.
+= 0.8.1 =
+This is a bug fix release for JSONP support. Thanks to Ben Wilson for reporting it!
+
+= 0.8 =
+Added what may be the last introspection feature: post attachments. You can now see images and other media that have been added to posts.

@@ -3,12 +3,13 @@
 class JSON_API_Introspector {
   
   function get_posts($query = '') {
+    global $post;
     // Returns an array of JSON_API_Post objects
     $this->set_posts_query($query);
     $output = array();
     while (have_posts()) {
       the_post();
-      $output[] = new JSON_API_Post();
+      $output[] = new JSON_API_Post($post);
     }
     return $output;
   }
@@ -143,7 +144,20 @@ class JSON_API_Introspector {
   }
   
   function get_author($id) {
+    return $this->get_author_by_id($id);
+  }
+  
+  function get_author_by_id($id) {
     return new JSON_API_Author($id);
+  }
+  
+  function get_author_by_login($login) {
+    $id = $wpdb->get_var($wpdb->prepare("
+      SELECT ID
+      FROM $wpdb->users
+      WHERE user_login = %s
+    ", $login));
+    return $this->get_author_by_id($id);
   }
   
   function get_current_author() {
