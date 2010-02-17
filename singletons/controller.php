@@ -114,7 +114,7 @@ class JSON_API_Controller {
   
   function get_category_posts() {
     $query = '';
-    if ($this->query->catgegory_id) {
+    if ($this->query->category_id) {
       $query = "cat={$this->query->category_id}";
     } else if ($this->query->category_slug) {
       $query = "category_name={$this->query->category_slug}";
