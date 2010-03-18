@@ -3,7 +3,7 @@ Contributors: dphiffer
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
 Tested up to: 2.9
-Stable tag: 0.9.1
+Stable tag: 0.9.2
 
 A RESTful API for WordPress
 
@@ -587,6 +587,9 @@ Submits a comment to a WordPress post.
 
 == Changelog ==
 
+= 0.9.2 (2010-03-18): =
+* Fixed a bug where the /api/ rewrite rules would be lost
+
 = 0.9 (2010-02-04): =
 * Added a `create_post` method
 
@@ -624,6 +627,9 @@ Submits a comment to a WordPress post.
 * Initial Public Release
 
 == Upgrade Notice ==
+
+= 0.9.2 =
+Fixed a bug where the /api/ path would stop working upon publishing new pages.
 
 = 0.9 =
 Added a new data manipulation method: `create_post`.
