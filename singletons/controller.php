@@ -92,6 +92,22 @@ class JSON_API_Controller {
       $this->error("No page specified. Include 'page_id' or 'page_slug' var in your request.");
     }
     $pages = $this->introspector->get_posts($query);
+    
+    // Workaround for https://core.trac.wordpress.org/ticket/12647
+    if (empty($pages)) {
+      $url = $_SERVER['REQUEST_URI'];
+      $parsed_url = parse_url($url);
+      $path = $parsed_url['path'];
+      if (preg_match('#^http://[^/]+(/.+)$#', get_bloginfo('url'), $matches)) {
+        $blog_root = $matches[1];
+        $path = preg_replace("#^$blog_root#", '', $path);
+      }
+      if (substr($path, 0, 1) == '/') {
+        $path = substr($path, 1);
+      }
+      $pages = $this->introspector->get_posts("pagename=$path");
+    }
+    
     if (count($pages) == 1) {
       return $this->response->get_json(array(
         'page' => $pages[0]
