@@ -3,7 +3,7 @@ Contributors: dphiffer
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
 Tested up to: 2.9
-Stable tag: 0.9.3
+Stable tag: 0.9.4
 
 A RESTful API for WordPress
 
@@ -587,6 +587,9 @@ Submits a comment to a WordPress post.
 
 == Changelog ==
 
+= 0.9.4 (2010-04-28): =
+* Fixed a bug where any non-authenticated user could create a draft blog post through `create_post`. Thanks to user futtta for posting about this.
+
 = 0.9.3 (2010-03-19): =
 * Fixed a bug where child pages were being ignored by the API. See also: https://core.trac.wordpress.org/ticket/12647
 
@@ -630,6 +633,9 @@ Submits a comment to a WordPress post.
 * Initial Public Release
 
 == Upgrade Notice ==
+
+= 0.9.4 =
+Security fix: all users are strongly encouraged to upgrade. (See Changelog.)
 
 = 0.9.3 =
 Fixed a bug where child pages could not be introspected by the API.

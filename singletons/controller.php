@@ -215,6 +215,9 @@ class JSON_API_Controller {
   }
   
   function create_post() {
+    if (!current_user_can('edit_posts')) {
+      $this->error("You need to login with a user capable of creating posts.");
+    }
     nocache_headers();
     $post = new JSON_API_Post();
     $id = $post->create($_REQUEST);
