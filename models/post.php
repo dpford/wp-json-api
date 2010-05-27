@@ -22,6 +22,7 @@ class JSON_API_Post {
   var $attachments;     // Array of objects
   var $comment_count;   // Integer
   var $comment_status;  // String ("open" or "closed")
+  var $thumbnail;       // String
   var $custom_fields;   // Object (included by using custom_fields query var)
   
   function JSON_API_Post($wp_post = null) {
@@ -139,6 +140,7 @@ class JSON_API_Post {
     $this->set_attachments_value();
     $this->set_value('comment_count', (int) $wp_post->comment_count);
     $this->set_value('comment_status', $wp_post->comment_status);
+    $this->set_thumbnail_value();
     $this->set_custom_fields_value();
   }
   
@@ -208,6 +210,21 @@ class JSON_API_Post {
     global $json_api;
     if ($json_api->include_value('attachments')) {
       $this->attachments = $json_api->introspector->get_attachments($this->id);
+    }
+  }
+  
+  function set_thumbnail_value() {
+    $values = get_post_custom_values('_thumbnail_id', $this->id);
+    if (empty($values)) {
+      unset($this->thumbnail);
+      return;
+    }
+    foreach ($this->attachments as $attachment) {
+      if ($attachment->id == $values[0]) {
+        $image = $attachment->images['thumbnail'];
+        $this->thumbnail = $image->url;
+        break;
+      }
     }
   }
   

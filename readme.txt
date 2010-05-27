@@ -3,7 +3,7 @@ Contributors: dphiffer
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
 Tested up to: 2.9
-Stable tag: 0.9.4
+Stable tag: 0.9.5
 
 A RESTful API for WordPress
 
@@ -165,6 +165,7 @@ Developers familiar with WordPress may notice that many names for properties and
 * `attachments` - Array of attachment objects
 * `comment_count` - Integer
 * `comment_status` - String (`"open"` or `"closed"`)
+* `thumbnail` - String (only included if a post thumbnail has been specified)
 * `custom_fields` - Object (included by setting the `custom_fields` argument to a comma-separated list of custom field names)
 
 = Category response object =
@@ -587,6 +588,9 @@ Submits a comment to a WordPress post.
 
 == Changelog ==
 
+= 0.9.5 (2010-05-27): =
+* Added a `thumbnail` property to Post response objects
+
 = 0.9.4 (2010-04-28): =
 * Fixed a bug where any non-authenticated user could create a draft blog post through `create_post`. Thanks to user futtta for posting about this.
 
@@ -633,6 +637,9 @@ Submits a comment to a WordPress post.
 * Initial Public Release
 
 == Upgrade Notice ==
+
+= 0.9.5 =
+Feature addition: post thumbnails now included in response objects.
 
 = 0.9.4 =
 Security fix: all users are strongly encouraged to upgrade. (See Changelog.)
