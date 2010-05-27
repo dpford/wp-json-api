@@ -3,7 +3,7 @@ Contributors: dphiffer
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
 Tested up to: 2.9
-Stable tag: 0.9.5
+Stable tag: 0.9.6
 
 A RESTful API for WordPress
 
@@ -588,6 +588,9 @@ Submits a comment to a WordPress post.
 
 == Changelog ==
 
+= 0.9.6 (2010-05-27): =
+* Fixed a bug introduced in 0.9.5
+
 = 0.9.5 (2010-05-27): =
 * Added a `thumbnail` property to Post response objects
 
@@ -637,6 +640,9 @@ Submits a comment to a WordPress post.
 * Initial Public Release
 
 == Upgrade Notice ==
+
+= 0.9.6 =
+Bugfix release for something added in 0.9.5.
 
 = 0.9.5 =
 Feature addition: post thumbnails now included in response objects.

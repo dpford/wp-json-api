@@ -214,12 +214,14 @@ class JSON_API_Post {
   }
   
   function set_thumbnail_value() {
+    global $json_api;
     $values = get_post_custom_values('_thumbnail_id', $this->id);
     if (empty($values)) {
       unset($this->thumbnail);
       return;
     }
-    foreach ($this->attachments as $attachment) {
+    $attachments = $json_api->introspector->get_attachments($this->id);
+    foreach ($attachments as $attachment) {
       if ($attachment->id == $values[0]) {
         $image = $attachment->images['thumbnail'];
         $this->thumbnail = $image->url;
