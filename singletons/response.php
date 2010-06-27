@@ -17,27 +17,6 @@ class JSON_API_Response {
     }
   }
   
-  function get_posts_json($posts, $status = 'ok') {
-    global $wp_query;
-    return $this->get_json(array(
-      'count' => count($posts),
-      'count_total' => $wp_query->found_posts,
-      'pages' => $wp_query->max_num_pages,
-      'posts' => $posts
-    ), $status);
-  }
-  
-  function get_posts_object_json($posts, $object, $status = 'ok') {
-    global $wp_query;
-    $object_key = strtolower(substr(get_class($object), 9));
-    return $this->get_json(array(
-      'count' => count($posts),
-      'pages' => $wp_query->max_num_pages,
-      $object_key => $object,
-      'posts' => $posts
-    ), $status);
-  }
-  
   function get_json($data, $status = 'ok') {
     // Include a status value with the response
     if (is_array($data)) {
@@ -49,17 +28,14 @@ class JSON_API_Response {
     
     $data = apply_filters('json_api_encode', $data);
     
-    if (!empty($_REQUEST['dev'])) {
-      // Don't JSON encode the data in dev mode
-      return $data;
-    } else if (function_exists('json_encode')) {
+    if (function_exists('json_encode')) {
       // Use the built-in json_encode function if it's available
       return json_encode($data);
     } else {
       // Use PEAR's Services_JSON encoder otherwise
       if (!class_exists('Services_JSON')) {
-        global $json_api_dir;
-        require_once "$json_api_dir/library/JSON.php";
+        $dir = dirname(dirname(__FILE__));
+        require_once "$dir/library/JSON.php";
       }
       $json = new Services_JSON();
       return $json->encode($data);
@@ -76,13 +52,16 @@ class JSON_API_Response {
   
   function respond($result, $status = 'ok') {
     global $json_api;
+    $json = $this->get_json($result, $status);
     $status_redirect = "redirect_$status";
-    if ($json_api->query->dev) {
-      // Output the result with print_r
+    if ($json_api->query->dev || !empty($_REQUEST['dev'])) {
+      // Output the result in a human-redable format
       if (!headers_sent()) {
         header('Content-Type: text/plain; charset: UTF-8', true);
+      } else {
+        echo '<pre>';
       }
-      print_r($result);
+      echo $this->prettify($json);
     } else if (!empty($_REQUEST[$status_redirect])) {
       wp_redirect($_REQUEST[$status_redirect]);
     } else if ($json_api->query->redirect) {
@@ -90,10 +69,10 @@ class JSON_API_Response {
       wp_redirect($url);
     } else if ($json_api->query->callback) {
       // Run a JSONP-style callback with the result
-      $this->callback($json_api->query->callback, $result);
+      $this->callback($json_api->query->callback, $json);
     } else {
-      // Output the result in JSON format
-      $this->output($result);
+      // Output the result
+      $this->output($json);
     }
     exit;
   }
@@ -104,7 +83,7 @@ class JSON_API_Response {
       header("Content-Type: application/json; charset=$charset", true);
       header("Content-Disposition: attachment; filename=\"json_api.json\"", true);
     }
-    echo $result;    
+    echo $result;
   }
   
   function callback($callback, $result) {
@@ -132,6 +111,63 @@ class JSON_API_Response {
       $url .= $anchor;
     }
     return $url;
+  }
+  
+  function prettify($ugly) {
+    $pretty = "";
+    $indent = "";
+    $last = '';
+    $pos = 0;
+    $level = 0;
+    $string = false;
+    while ($pos < strlen($ugly)) {
+      $char = substr($ugly, $pos++, 1);
+      if (!$string) {
+        if ($char == '{' || $char == '[') {
+          if ($char == '[' && substr($ugly, $pos, 1) == ']') {
+            $pretty .= "[]";
+            $pos++;
+          } else if ($char == '{' && substr($ugly, $pos, 1) == '}') {
+            $pretty .= "{}";
+            $pos++;
+          } else {
+            $pretty .= "$char\n";
+            $indent = str_repeat('  ', ++$level);
+            $pretty .= "$indent";
+          }
+        } else if ($char == '}' || $char == ']') {
+          $indent = str_repeat('  ', --$level);
+          if ($last != '}' && $last != ']') {
+            $pretty .= "\n$indent";
+          } else if (substr($pretty, -2, 2) == '  ') {
+            $pretty = substr($pretty, 0, -2);
+          }
+          $pretty .= $char;
+          if (substr($ugly, $pos, 1) == ',') {
+            $pretty .= ",";
+            $last = ',';
+            $pos++;
+          }
+          $pretty .= "\n$indent";
+        } else if ($char == ':') {
+          $pretty .= ": ";
+        } else if ($char == ',') {
+          $pretty .= ",\n$indent";
+        } else if ($char == '"') {
+          $pretty .= '"';
+          $string = true;
+        } else {
+          $pretty .= $char;
+        }
+      } else {
+        if ($last != '\\' && $char == '"') {
+          $string = false;
+        }
+        $pretty .= $char;
+      }
+      $last = $char;
+    }
+    return $pretty;
   }
   
 }

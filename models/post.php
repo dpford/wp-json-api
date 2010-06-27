@@ -6,6 +6,7 @@ class JSON_API_Post {
   //   JSON_API_Post objects must be instantiated within The Loop.
   
   var $id;              // Integer
+  var $type;            // String
   var $slug;            // String
   var $url;             // String
   var $status;          // String ("draft", "published", or "pending")
@@ -54,6 +55,10 @@ class JSON_API_Post {
     
     if (!empty($values['id'])) {
       $wp_values['ID'] = $values['id'];
+    }
+    
+    if (!empty($values['type'])) {
+      $wp_values['post_type'] = $values['type'];
     }
     
     if (!empty($values['status'])) {
@@ -124,6 +129,7 @@ class JSON_API_Post {
     $date_format = $json_api->query->date_format;
     $this->id = (int) $wp_post->ID;
     setup_postdata($wp_post);
+    $this->set_value('type', $wp_post->post_type);
     $this->set_value('slug', $wp_post->post_name);
     $this->set_value('url', get_permalink($this->id));
     $this->set_value('status', $wp_post->post_status);

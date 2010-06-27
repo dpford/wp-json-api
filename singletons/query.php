@@ -2,81 +2,36 @@
 
 class JSON_API_Query {
   
-  var $vars = array(
-    'json',          // Determines which API controller method will be called
-                     //   Expects one of the following values:
-                     //     * 'get_recent_posts'
-                     //     * 'get_post'
-                     //     * 'get_page'
-                     //     * 'get_date_posts'
-                     //     * 'get_category_posts'
-                     //     * 'get_tag_posts'
-                     //     * 'get_author_posts'
-                     //     * 'get_date_index'
-                     //     * 'get_category_index'
-                     //     * 'get_tag_index'
-                     //     * 'get_author_index'
-                     //     * 'get_search_results'
-                     //     * 'submit_comment'
-                     //     * Any non-empty value to trigger the API implicitly
-    'callback',      // Triggers a JSONP-style callback with the resulting data
-    'dev',           // Triggers a developer-friendly print_r() output
-    'redirect',      // Triggers a redirect response to the specified URL
-    'page',          // Returns a specific page of results
-    'count',         // Controls the number of posts returned
-    'post_id',       // Used by the get_post API method
-    'post_slug',     // Used by the get_post API method
-    'page_id',       // Used by the get_page API method
-    'page_slug',     // Used by the get_page API method
-    'search',        // Used by the get_search_results API method
-    'category_id',   // Used by get_category_posts API method
-    'category_slug', // Used by get_category_posts API method
-    'tag_id',        // Used by get_tag_posts API method
-    'tag_slug',      // Used by get_tag_posts API method
-    'author_id',     // Used by get_author_posts API method
-    'author_slug',   // Used by get_author_posts API method
-    'date',          // Used by get_date_posts API method
-                     //   Expects 'YYYY', 'YYYYMM' or 'YYYYMMDD'
-    'date_format',   // Changes the format of date values
-                     //   Uses the same syntax as PHP's date() function
-                     //   Default value is Y-m-d H:i:s
-    'read_more',     // Changes the 'read more' link text in post content
-    'include',       // Specifies which post data fields to include
-                     //   Expects a comma-separated list of post fields
-                     //   Leaving this empty includes *all* fields
-    'exclude',       // Specifies which post data fields to exclude
-                     //   Expects a comma-separated list of post fields
-    'custom_fields', // Includes values from posts' Custom Fields
-                     //   Expects a comma-separated list of custom field keys
-    'author_meta'    // Includes additional author metadata
-                     //   Should be a comma-separated list of metadata fields
-    
-    // Note about include/exclude vars:
-    //   The default behavior includes all post values. You only need to
-    //   specify one of include or exclude -- the former will implicitly leave
-    //   out those fields you haven't specified and the latter will implicitly
-    //   include them. For example, a query that uses exclude=comments will
-    //   include everything *except* the comments, so there's no need to also
-    //   specify anything with the include argument.
-
-  );
-  
   // Default values
-  var $date_format = 'Y-m-d H:i:s';
-  var $read_more = 'Read more';
+  protected $defaults = array(
+    'date_format' => 'Y-m-d H:i:s',
+    'read_more' => 'Read more'
+  );
   
   function JSON_API_Query() {
     // Register JSON API query vars
     add_filter('query_vars', array(&$this, 'query_vars'));
   }
   
-  function query_vars($wp_vars) {
-    // This makes our variables available from the get_query_var WP function
-    return array_merge($wp_vars, $this->vars);
+  function get($key) {
+    $query_var = (isset($_REQUEST[$key])) ? $_REQUEST[$key] : null;
+    $wp_query_var = $this->wp_query_var($key);
+    if ($wp_query_var) {
+      return $wp_query_var;
+    } else if ($query_var) {
+      return $this->strip_magic_quotes($query_var);
+    } else if (isset($this->defaults[$key])) {
+      return $this->defaults[$key];
+    } else {
+      return null;
+    }
   }
   
-  function setup() {
-    // Translation between WordPress vars and natively understood vars
+  function __get($key) {
+    return $this->get($key);
+  }
+  
+  function wp_query_var($key) {
     $wp_translation = array(
       'p' =>              'post_id',
       'name' =>           'post_slug',
@@ -84,30 +39,52 @@ class JSON_API_Query {
       'pagename' =>       'page_slug',
       'cat' =>            'category_id',
       'category_name' =>  'category_slug',
+      'tag_id' =>         'tag_id',
       'tag' =>            'tag_slug',
       'author' =>         'author_id',
       'author_name' =>    'author_slug',
       'm' =>              'date',
-      's' =>              'search'
+      's' =>              'search',
+      'order' =>          'order',
+      'orderby' =>        'order_by'
     );
-    
-    foreach ($wp_translation as $wp_var => $var) {
-      // Assign WP query vars to natively understood vars
-      $this->$var = get_query_var($wp_var);
-    }
-    
-    foreach ($this->vars as $var) {
-      // Assign query vars as object properties for convenience
-      $value = get_query_var($var);
-      if ($value) {
-        $this->$var = $value;
-      } else if (!isset($this->$var)) {
-        $this->$var = null;
-      }
+    if ($key == 'json' || in_array($key, $wp_translation)) {
+      return get_query_var($key);
+    } else {
+      return null;
     }
   }
   
-  function get_method() {
+  function strip_magic_quotes($value) {
+    if (get_magic_quotes_gpc()) {
+      return stripslashes($value);
+    } else {
+      return $value;
+    }
+  }
+  
+  function query_vars($wp_vars) {
+    $wp_vars[] = 'json';
+    return $wp_vars;
+  }
+  
+  function get_controller() {
+    $json = $this->get('json');
+    if (empty($json)) {
+      return false;
+    }
+    if (strpos($json, '/') === false) {
+      $controller = 'core';
+    } else {
+      list($controller, $method) = explode('/', $json);
+    }
+    return $controller;
+  }
+  
+  function get_method($controller) {
+    
+    global $json_api;
+    
     // Returns an appropriate API method name or false. Four possible outcomes:
     //   1. API isn't being invoked at all (return false)
     //   2. A specific API method was requested (return method name)
@@ -117,41 +94,45 @@ class JSON_API_Query {
     // Note:
     //   The implicit outcome (3) is invoked by setting the json query var to a
     //   non-empty value on any WordPress page:
-    //     * http://example.org/2009/11/10/hello-world/?json=1
-    //     * http://example.org/2009/11/?json=1
-    //     * http://example.org/category/foo?json=1
+    //     * http://example.org/2009/11/10/hello-world/?json=1 (get_post)
+    //     * http://example.org/2009/11/?json=1 (get_date_posts)
+    //     * http://example.org/category/foo?json=1 (get_category_posts)
     
-    $this->method = get_query_var('json');
+    $method = $this->get('json');
     
-    if (empty($this->method)) {
+    if (empty($method)) {
       // Case 1: we're not being invoked (done!)
       return false;
-    } else if (method_exists('JSON_API_Controller', $this->method)) {
+    } else if (method_exists("JSON_API_{$controller}_Controller", $method)) {
       // Case 2: an explicit method was specified
-      return $this->method;
-      
-    // Case 3: choose the method implicitly based on which page we're on...
-    
-    } else if (is_search()) {
-      return 'get_search_results';
-    } else if (is_home()) {
-      return 'get_recent_posts';
-    } else if (is_page()) {
-      return 'get_page';
-    } else if (is_single()) {
-      return 'get_post';
-    } else if (is_category()) {
-      return 'get_category_posts';
-    } else if (is_tag()) {
-      return 'get_tag_posts';
-    } else if (is_author()) {
-      return 'get_author_posts';
-    } else if (is_date()) {
-      return 'get_date_posts';
-    } else {
-      // Case 4: either the method doesn't exist or we don't support this page
-      return 'error';
+      return $method;
+    } else if ($controller == 'core') {
+      // Case 3: choose the method implicitly based on which page we're on...
+      if (is_search()) {
+        return 'get_search_results';
+      } else if (is_home()) {
+        if (empty($_GET['json'])) {
+          $json_api->error("Uknown method '$method'.");
+        }
+        return 'get_recent_posts';
+      } else if (is_page()) {
+        return 'get_page';
+      } else if (is_single()) {
+        return 'get_post';
+      } else if (is_category()) {
+        return 'get_category_posts';
+      } else if (is_tag()) {
+        return 'get_tag_posts';
+      } else if (is_author()) {
+        return 'get_author_posts';
+      } else if (is_date()) {
+        return 'get_date_posts';
+      } else if (is_404()) {
+        return '404';
+      }
     }
+    // Case 4: either the method doesn't exist or we don't support the page implicitly
+    return 'error';
   }
   
 }
