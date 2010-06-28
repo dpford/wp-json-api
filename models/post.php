@@ -227,9 +227,10 @@ class JSON_API_Post {
       return;
     }
     $attachments = $json_api->introspector->get_attachments($this->id);
+    $thumbnail_size = $this->get_thumbnail_size();
     foreach ($attachments as $attachment) {
       if ($attachment->id == $values[0]) {
-        $image = $attachment->images['thumbnail'];
+        $image = $attachment->images[$thumbnail_size];
         $this->thumbnail = $image->url;
         break;
       }
@@ -251,6 +252,16 @@ class JSON_API_Post {
     } else {
       unset($this->custom_fields);
     }
+  }
+  
+  function get_thumbnail_size() {
+    if (function_exists('get_intermediate_image_sizes')) {
+      $sizes = get_intermediate_image_sizes();
+      if (in_array('post-thumbnail', $sizes)) {
+        return 'post-thumbnail';
+      }
+    }
+    return 'thumbnail';
   }
   
 }

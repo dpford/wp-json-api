@@ -37,6 +37,9 @@ class JSON_API_Attachment {
   
   function query_images() {
     $sizes = array('thumbnail', 'medium', 'large', 'full');
+    if (function_exists('get_intermediate_image_sizes')) {
+      $sizes = array_merge(array('full'), get_intermediate_image_sizes());
+    }
     $this->images = array();
     foreach ($sizes as $size) {
       list($url, $width, $height) = wp_get_attachment_image_src($this->id, $size);
