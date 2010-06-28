@@ -108,7 +108,7 @@ Here is an example response from `http://localhost/wordpress/?json=1` called on 
 
 == API Reference ==
 
-The JSON API reference is split into four sections:
+The JSON API reference is split into the following sections:
 
 1. Core methods
 1. Response objects
@@ -119,7 +119,7 @@ The JSON API reference is split into four sections:
 
 == 1. Core methods ==
 
-The Core controller offers a mostly-complete set of introspection methods for retrieving content from WordPress and two very basic data manipulation methods.
+The Core controller offers a mostly-complete set of introspection methods for retrieving content from WordPress.
 
 
 == Method: info ==
@@ -135,7 +135,9 @@ Returns information about JSON API.
     {
       "status": "ok",
       "json_api_version": "1.0",
-      "controllers": "core"
+      "controllers": [
+        "core"
+      ]
     }
 
 = Response =
@@ -158,10 +160,9 @@ Returns information about JSON API.
         "get_category_index",
         "get_tag_index",
         "get_author_index",
-        "create_post",
-        "submit_comment"
+        "get_nonce"
       ],
-      "url": "http:\/\/wordpress.org\/extend\/plugins\/json-api\/other_notes\/"
+      "docs": "http:\/\/wordpress.org\/extend\/plugins\/json-api\/other_notes\/"
     }
     
 
@@ -195,8 +196,8 @@ Returns a single post object.
 = One of the following is required =
 
 * Invoking the JSON API implicitly (i.e., `?json=1`) on a post URL
-* `post_id` - set to the post's ID
-* `post_slug` - set to the post's URL slug
+* `id` or `post_id` - set to the post's ID
+* `slug` or `post_slug` - set to the post's URL slug
 
 = Response =
 
@@ -213,8 +214,11 @@ Returns a single page object.
 = One of the following is required =
 
 * Invoking the JSON API implicitly (i.e., `?json=1`) on a page URL
-* `page_id` - set to the page's ID
-* `page_slug` - set to the page's URL slug
+* `id` or `page_id` - set to the page's ID
+* `slug` or `page_slug` - set to the page's URL slug
+
+= Optional arguments =
+
 * `children` - set to a non-empty value to include a recursive hierarchy of child pages
 
 = Response =
@@ -231,7 +235,7 @@ Returns an array of posts/pages in a specific category.
 = One of the following is required =
 
 * Invoking the JSON API implicitly (i.e., `?json=1`) on a date archive page
-* `date` - set to a date in the format `YYYY` or `YYYYMM` or `YYYYMMDD`
+* `date` - set to a date in the format `YYYY` or `YYYY-MM` or `YYYY-MM-DD` (non-numeric characters are stripped from the var, so `YYYYMMDD` or `YYYY/MM/DD` also valid)
 
 = Optional arguments =
 
@@ -258,8 +262,8 @@ Returns an array of posts/pages in a specific category.
 = One of the following is required =
 
 * Invoking the JSON API implicitly (i.e., `?json=1`) on a category archive page
-* `category_id` - set to the category's ID
-* `category_slug` - set to the category's URL slug
+* `id` or `category_id` - set to the category's ID
+* `slug` or `category_slug` - set to the category's URL slug
 
 = Optional arguments =
 
@@ -288,8 +292,8 @@ Returns an array of posts/pages with a specific tag.
 = One of the following is required =
 
 * Invoking the JSON API implicitly (i.e., `?json=1`) on a tag archive page
-* `tag_id` - set to the tag's ID
-* `tag_slug` - set to the tag's URL slug
+* `id` or `tag_id` - set to the tag's ID
+* `slug` or `tag_slug` - set to the tag's URL slug
 
 = Optional arguments =
 
@@ -318,8 +322,8 @@ Returns an array of posts/pages written by a specific author.
 = One of the following is required =
 
 * Invoking the JSON API implicitly (i.e., `?json=1`) on an author archive page
-* `author_id` - set to the author's ID
-* `author_slug` - set to the author's URL slug
+* `id` or `author_id` - set to the author's ID
+* `slug` or `author_slug` - set to the author's URL slug
 
 = Optional arguments =
 

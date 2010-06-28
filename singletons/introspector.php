@@ -2,7 +2,7 @@
 
 class JSON_API_Introspector {
   
-  function get_posts($query = false) {
+  public function get_posts($query = false) {
     global $post;
     $this->set_posts_query($query);
     $output = array();
@@ -13,13 +13,13 @@ class JSON_API_Introspector {
     return $output;
   }
   
-  function get_date_archive_permalinks() {
+  public function get_date_archive_permalinks() {
     $archives = wp_get_archives('echo=0');
     preg_match_all("/href='([^']+)'/", $archives, $matches);
     return $matches[1];
   }
   
-  function get_date_archive_tree($permalinks) {
+  public function get_date_archive_tree($permalinks) {
     $tree = array();
     foreach ($permalinks as $url) {
       if (preg_match('#(\d{4})/(\d{2})#', $url, $date)) {
@@ -43,7 +43,7 @@ class JSON_API_Introspector {
     return $tree;
   }
   
-  function get_date_archive_count($year, $month) {
+  public function get_date_archive_count($year, $month) {
     if (!isset($this->month_archives)) {
       global $wpdb;
       $post_counts = $wpdb->get_results("
@@ -62,7 +62,7 @@ class JSON_API_Introspector {
     return $this->month_archives["$year$month"];
   }
   
-  function get_categories() {
+  public function get_categories() {
     $wp_categories = get_categories();
     $categories = array();
     foreach ($wp_categories as $wp_category) {
@@ -74,60 +74,70 @@ class JSON_API_Introspector {
     return $categories;
   }
   
-  function get_current_category() {
+  public function get_current_category() {
     global $json_api;
-    if (!empty($json_api->query->category_id)) {
-      return $this->get_category_by_id($json_api->query->category_id);
-    } else if (!empty($json_api->query->category_slug)) {
-      return $this->get_category_by_slug($json_api->query->category_slug);
+    extract($json_api->query->get(array('id', 'slug', 'category_id', 'category_slug')));
+    if ($id || $category_id) {
+      if (!$id) {
+        $id = $category_id;
+      }
+      return $this->get_category_by_id($id);
+    } else if ($slug || $category_slug) {
+      if (!$slug) {
+        $slug = $category_slug;
+      }
+      return $this->get_category_by_slug($slug);
+    } else {
+      $json_api->error("Include 'id' or 'slug' var in your request.");
     }
     return null;
   }
   
-  function get_category_object($wp_category) {
-    return new JSON_API_Category($wp_category);
-  }
-  
-  function get_category_by_id($category_id) {
+  public function get_category_by_id($category_id) {
     $wp_category = get_term_by('id', $category_id, 'category');
     return $this->get_category_object($wp_category);
   }
   
-  function get_category_by_slug($category_slug) {
+  public function get_category_by_slug($category_slug) {
     $wp_category = get_term_by('slug', $category_slug, 'category');
     return $this->get_category_object($wp_category);
   }
   
-  function get_tags() {
+  public function get_tags() {
     $wp_tags = get_tags();
     return array_map(array(&$this, 'get_tag_object'), $wp_tags);
   }
   
-  function get_current_tag() {
+  public function get_current_tag() {
     global $json_api;
-    if (!empty($json_api->query->tag_id)) {
-      return $this->get_tag_by_id($json_api->query->tag_id);
-    } else if (!empty($json_api->query->tag_slug)) {
-      return $this->get_tag_by_slug($json_api->query->tag_slug);
+    extract($json_api->query->get(array('id', 'slug', 'tag_id', 'tag_slug')));
+    if ($id || $tag_id) {
+      if (!$id) {
+        $id = $tag_id;
+      }
+      return $this->get_tag_by_id($id);
+    } else if ($slug || $tag_slug) {
+      if (!$slug) {
+        $slug = $tag_slug;
+      }
+      return $this->get_tag_by_slug($slug);
+    } else {
+      $json_api->error("Include 'id' or 'slug' var in your request.");
     }
     return null;
   }
   
-  function get_tag_object($wp_tag) {
-    return new JSON_API_Tag($wp_tag);
-  }
-  
-  function get_tag_by_id($tag_id) {
+  public function get_tag_by_id($tag_id) {
     $wp_tag = get_term_by('id', $tag_id, 'post_tag');
     return $this->get_tag_object($wp_tag);
   }
   
-  function get_tag_by_slug($tag_slug) {
+  public function get_tag_by_slug($tag_slug) {
     $wp_tag = get_term_by('slug', $tag_slug, 'post_tag');
     return $this->get_tag_object($wp_tag);
   }
   
-  function get_authors() {
+  public function get_authors() {
     global $wpdb;
     $author_ids = $wpdb->get_col($wpdb->prepare("
       SELECT u.ID, m.meta_value AS last_name
@@ -137,20 +147,40 @@ class JSON_API_Introspector {
         AND m.meta_key = 'last_name'
       ORDER BY last_name
     "));
-    $all_authors = array_map(array(&$this, 'get_author'), $author_ids);
+    $all_authors = array_map(array(&$this, 'get_author_by_id'), $author_ids);
     $active_authors = array_filter($all_authors, array(&$this, 'is_active_author'));
     return $active_authors;
   }
   
-  function get_author($id) {
-    return $this->get_author_by_id($id);
+  public function get_current_author() {
+    global $json_api;
+    extract($json_api->query->get(array('id', 'slug', 'author_id', 'author_slug')));
+    if ($id || $author_id) {
+      if (!$id) {
+        $id = $author_id;
+      }
+      return $this->get_author_by_id($id);
+    } else if ($slug || $author_slug) {
+      if (!$slug) {
+        $slug = $author_slug;
+      }
+      return $this->get_author_by_login($slug);
+    } else {
+      $json_api->error("Include 'id' or 'slug' var in your request.");
+    }
+    return null;
   }
   
-  function get_author_by_id($id) {
+  public function get_author_by_id($id) {
+    $id = get_the_author_meta('ID', $id);
+    if (!$id) {
+      return null;
+    }
     return new JSON_API_Author($id);
   }
   
-  function get_author_by_login($login) {
+  public function get_author_by_login($login) {
+    global $wpdb;
     $id = $wpdb->get_var($wpdb->prepare("
       SELECT ID
       FROM $wpdb->users
@@ -159,42 +189,7 @@ class JSON_API_Introspector {
     return $this->get_author_by_id($id);
   }
   
-  function get_current_author() {
-    $author_id = get_query_var('author');
-    return $this->get_author($author_id);
-  }
-  
-  function is_active_author($author) {
-    if (!isset($this->active_authors)) {
-      $this->active_authors = explode(',', wp_list_authors('html=0&echo=0'));
-      $this->active_authors = array_map('trim', $this->active_authors);
-    }
-    return in_array($author->name, $this->active_authors);
-  }
-  
-  function set_posts_query($query = false) {
-    global $wp_query;
-    
-    if (!$query) {
-      $query = array();
-    }
-    
-    $query = array_merge($query, $wp_query->query);
-    
-    // Returns a query string to pass to WP's query_posts() function
-    if (get_query_var('page')) {
-      $query['paged'] = get_query_var('page');
-    }
-    if (get_query_var('count')) {
-      $query['posts_per_page'] = get_query_var('count');
-    }
-    
-    if (!empty($query)) {
-      query_posts($query);
-    }
-  }
-  
-  function get_comments($post_id) {
+  public function get_comments($post_id) {
     global $wpdb;
     $wp_comments = $wpdb->get_results($wpdb->prepare("
       SELECT *
@@ -211,7 +206,7 @@ class JSON_API_Introspector {
     return $comments;
   }
   
-  function get_attachments($post_id) {
+  public function get_attachments($post_id) {
     $wp_attachments = get_children("post_type=attachment&post_parent=$post_id");
     $attachments = array();
     if (!empty($wp_attachments)) {
@@ -222,7 +217,7 @@ class JSON_API_Introspector {
     return $attachments;
   }
   
-  function attach_child_posts(&$post) {
+  public function attach_child_posts(&$post) {
     $post->children = array();
     $wp_children = get_posts(array(
       'post_type' => $post->type,
@@ -235,6 +230,54 @@ class JSON_API_Introspector {
     }
     foreach ($post->children as $child) {
       $this->attach_child_posts($child);
+    }
+  }
+  
+  protected function get_category_object($wp_category) {
+    if (!$wp_category) {
+      return null;
+    }
+    return new JSON_API_Category($wp_category);
+  }
+  
+  protected function get_tag_object($wp_tag) {
+    if (!$wp_tag) {
+      return null;
+    }
+    return new JSON_API_Tag($wp_tag);
+  }
+  
+  protected function is_active_author($author) {
+    if (!isset($this->active_authors)) {
+      $this->active_authors = explode(',', wp_list_authors(array(
+        'html' => false,
+        'echo' => false,
+        'exclude_admin' => false
+      )));
+      $this->active_authors = array_map('trim', $this->active_authors);
+    }
+    return in_array($author->name, $this->active_authors);
+  }
+  
+  protected function set_posts_query($query = false) {
+    global $json_api, $wp_query;
+    
+    if (!$query) {
+      $query = array();
+    }
+    
+    $query = array_merge($query, $wp_query->query);
+    
+    if ($json_api->query->page) {
+      $query['paged'] = $json_api->query->page;
+    }
+    
+    if ($json_api->query->count) {
+      $query['posts_per_page'] = $json_api->query->count;
+    }
+    
+    if (!empty($query)) {
+      query_posts($query);
     }
   }
   

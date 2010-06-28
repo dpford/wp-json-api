@@ -2,17 +2,18 @@
 
 class JSON_API_Response {
   
-  function JSON_API_Response() {
+  function __construct() {
     $this->setup_include_values();
   }
   
   function setup_include_values() {
+    global $json_api;
     $this->include_values = array();
-    if (get_query_var('include')) {
-      $this->include_values = explode(',', get_query_var('include'));
+    if ($json_api->query->include) {
+      $this->include_values = explode(',', $json_api->query->include);
     }
-    if (get_query_var('exclude')) {
-      $exclude = explode(',', get_query_var('exclude'));
+    if ($json_api->query->exclude) {
+      $exclude = explode(',', $json_api->query->exclude);
       $this->include_values = array_diff($this->include_values, $exclude);
     }
   }

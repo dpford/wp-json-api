@@ -21,8 +21,16 @@ require_once "$dir/models/attachment.php";
 
 function json_api_init() {
   global $json_api;
+  if (phpversion() < 5) {
+    add_action('admin_notices', 'json_api_php_version_warning');
+    return;
+  }
   add_filter('rewrite_rules_array', 'json_api_rewrites');
   $json_api = new JSON_API();
+}
+
+function json_api_php_version_warning() {
+  echo "<div id=\"json-api-warning\" class=\"updated fade\"><p>Sorry, JSON API requires PHP version 5.0 or greater.</p></div>";
 }
 
 function json_api_activation() {
@@ -58,7 +66,7 @@ register_deactivation_hook("$dir/json-api.php", 'json_api_deactivation');
 
 class JSON_API {
   
-  function JSON_API() {
+  function __construct() {
     $this->query = new JSON_API_Query();
     $this->introspector = new JSON_API_Introspector();
     $this->response = new JSON_API_Response();
@@ -332,32 +340,30 @@ class JSON_API {
   }
   
   function controller_info($controller) {
-    $name = $controller;
-    $description = '(No description available)';
-    $methods = array();
     $path = $this->controller_path($controller);
     $class = $this->controller_class($controller);
-    $url = '';
+    $response = array(
+      'name' => $controller,
+      'description' => '(No description available)',
+      'methods' => array()
+    );
     if (file_exists($path)) {
       $source = file_get_contents($path);
       if (preg_match('/^\s*Name:(.+)$/im', $source, $matches)) {
-        $name = trim($matches[1]);
+        $response['name'] = trim($matches[1]);
       }
       if (preg_match('/^\s*Description:(.+)$/im', $source, $matches)) {
-        $description = trim($matches[1]);
+        $response['description'] = trim($matches[1]);
       }
-      if (preg_match('/^\s*URL:(.+)$/im', $source, $matches)) {
-        $url = trim($matches[1]);
+      if (preg_match('/^\s*Docs:(.+)$/im', $source, $matches)) {
+        $response['docs'] = trim($matches[1]);
       }
-      require_once $path;
-      $methods = get_class_methods($class);
+      require_once($path);
+      $response['methods'] = get_class_methods($class);
+      return $response;
+    } else {
+      $json_api->error("Unknown controller '$controller'.");
     }
-    return array(
-      'name' => $name,
-      'description' => $description,
-      'methods' => $methods,
-      'url' => $url
-    );
   }
   
   function controller_class($controller) {

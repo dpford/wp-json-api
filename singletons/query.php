@@ -8,12 +8,19 @@ class JSON_API_Query {
     'read_more' => 'Read more'
   );
   
-  function JSON_API_Query() {
+  function __construct() {
     // Register JSON API query vars
     add_filter('query_vars', array(&$this, 'query_vars'));
   }
   
   function get($key) {
+    if (is_array($key)) {
+      $result = array();
+      foreach ($key as $k) {
+        $result[$k] = $this->get($k);
+      }
+      return $result;
+    }
     $query_var = (isset($_REQUEST[$key])) ? $_REQUEST[$key] : null;
     $wp_query_var = $this->wp_query_var($key);
     if ($wp_query_var) {
@@ -31,25 +38,49 @@ class JSON_API_Query {
     return $this->get($key);
   }
   
+  function __isset($key) {
+    return ($this->get($key) !== null);
+  }
+  
   function wp_query_var($key) {
     $wp_translation = array(
-      'p' =>              'post_id',
-      'name' =>           'post_slug',
+      'json' =>           'json',
+      'post_id' =>        'p',
+      'post_slug' =>      'name',
       'page_id' =>        'page_id',
-      'pagename' =>       'page_slug',
-      'cat' =>            'category_id',
-      'category_name' =>  'category_slug',
+      'page_slug' =>      'name',
+      'category_id' =>    'cat',
+      'category_slug' =>  'category_name',
       'tag_id' =>         'tag_id',
-      'tag' =>            'tag_slug',
-      'author' =>         'author_id',
-      'author_name' =>    'author_slug',
-      'm' =>              'date',
-      's' =>              'search',
+      'tag_slug' =>       'tag',
+      'author_id' =>      'author',
+      'author_slug' =>    'author_name',
+      'search' =>         's',
       'order' =>          'order',
-      'orderby' =>        'order_by'
+      'order_by' =>       'orderby'
     );
-    if ($key == 'json' || in_array($key, $wp_translation)) {
-      return get_query_var($key);
+    if ($key == 'date') {
+      $date = null;
+      if (get_query_var('year')) {
+        $date = get_query_var('year');
+      }
+      if (get_query_var('monthnum')) {
+        $month = get_query_var('monthnum');
+        if ($month < 10) {
+          $month = "0$month";
+        }
+        $date .= $month;
+      }
+      if (get_query_var('day')) {
+        $day = get_query_var('day');
+        if ($day < 10) {
+          $day = "0$day";
+        }
+        $date .= $day;
+      }
+      return $date;
+    } else if (isset($wp_translation[$key])) {
+      return get_query_var($wp_translation[$key]);
     } else {
       return null;
     }
