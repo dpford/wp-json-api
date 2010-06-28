@@ -134,7 +134,7 @@ class JSON_API_Post {
     $this->set_value('url', get_permalink($this->id));
     $this->set_value('status', $wp_post->post_status);
     $this->set_value('title', get_the_title($this->id));
-    $this->set_value('title_plain', strip_tags($this->title));
+    $this->set_value('title_plain', strip_tags(@$this->title));
     $this->set_content_value();
     $this->set_value('excerpt', get_the_excerpt());
     $this->set_value('date', get_the_time($date_format));
@@ -166,6 +166,8 @@ class JSON_API_Post {
       $content = apply_filters('the_content', $content);
       $content = str_replace(']]>', ']]&gt;', $content);
       $this->content = $content;
+    } else {
+      unset($this->content);
     }
   }
   
@@ -183,6 +185,8 @@ class JSON_API_Post {
           $this->categories[] = $category;
         }
       }
+    } else {
+      unset($this->categories);
     }
   }
   
@@ -195,6 +199,8 @@ class JSON_API_Post {
           $this->tags[] = new JSON_API_Tag($wp_tag);
         }
       }
+    } else {
+      unset($this->tags);
     }
   }
   
@@ -202,6 +208,8 @@ class JSON_API_Post {
     global $json_api;
     if ($json_api->include_value('author')) {
       $this->author = new JSON_API_Author($author_id);
+    } else {
+      unset($this->author);
     }
   }
   
@@ -209,6 +217,8 @@ class JSON_API_Post {
     global $json_api;
     if ($json_api->include_value('comments')) {
       $this->comments = $json_api->introspector->get_comments($this->id);
+    } else {
+      unset($this->comments);
     }
   }
   
@@ -216,11 +226,17 @@ class JSON_API_Post {
     global $json_api;
     if ($json_api->include_value('attachments')) {
       $this->attachments = $json_api->introspector->get_attachments($this->id);
+    } else {
+      unset($this->attachments);
     }
   }
   
   function set_thumbnail_value() {
     global $json_api;
+    if (!$json_api->include_value('thumbnail')) {
+      unset($this->thumbnail);
+      return;
+    }
     $values = get_post_custom_values('_thumbnail_id', $this->id);
     if (empty($values)) {
       unset($this->thumbnail);

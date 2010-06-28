@@ -101,6 +101,8 @@ class JSON_API {
       
       if ($method) {
         
+        $this->response->setup();
+        
         // Run action hooks for method
         do_action("json_api-{$controller}-$method");
         
@@ -377,6 +379,7 @@ class JSON_API {
   
   function controller_path($controller) {
     $dir = dirname(__FILE__);
+    $controller_class = $this->controller_class($controller);
     return apply_filters("{$controller_class}_path", "$dir/controllers/$controller.php");
   }
   

@@ -2,11 +2,7 @@
 
 class JSON_API_Response {
   
-  function __construct() {
-    $this->setup_include_values();
-  }
-  
-  function setup_include_values() {
+  function setup() {
     global $json_api;
     $this->include_values = array();
     if ($json_api->query->include) {
