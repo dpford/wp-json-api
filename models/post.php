@@ -233,24 +233,19 @@ class JSON_API_Post {
   
   function set_thumbnail_value() {
     global $json_api;
-    if (!$json_api->include_value('thumbnail')) {
+    if (!$json_api->include_value('thumbnail') ||
+        !function_exists('get_post_thumbnail_id')) {
       unset($this->thumbnail);
       return;
     }
-    $values = get_post_custom_values('_thumbnail_id', $this->id);
-    if (empty($values)) {
+    $attachment_id = get_post_thumbnail_id($this->id);
+    if (!$attachment_id) {
       unset($this->thumbnail);
       return;
     }
-    $attachments = $json_api->introspector->get_attachments($this->id);
     $thumbnail_size = $this->get_thumbnail_size();
-    foreach ($attachments as $attachment) {
-      if ($attachment->id == $values[0]) {
-        $image = $attachment->images[$thumbnail_size];
-        $this->thumbnail = $image->url;
-        break;
-      }
-    }
+    list($thumbnail) = wp_get_attachment_image_src($attachment_id, $thumbnail_size);
+    $this->thumbnail = $thumbnail;
   }
   
   function set_custom_fields_value() {

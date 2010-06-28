@@ -10,14 +10,14 @@ A RESTful API for WordPress
 
 == Description ==
 
-JSON API offers a means of retrieving and manipulating WordPress content using HTTP requests. There are two main goals with JSON API:
+JSON API allows you to retrieve and manipulate WordPress content using HTTP requests. There are two main goals:
 
 1. Provide a simple, consistent external interface
-2. Create a stable, understandable internal implementation
+1. Create a stable, understandable internal implementation
 
 This plugin was created for [The Museum of Modern Art](http://moma.org/), whose weblog [Inside/Out](http://moma.org/explore/inside_out) is served from Ruby on Rails. Instead of reimplementing the site templates as a WordPress theme, we opted for a Rails front-end that displays content served from a WordPress back-end. JSON API provides the necessary interface for retrieving content and accepting comment submissions.
 
-See the *Other Notes* section for complete API documentation.
+See the [Other Notes](http://wordpress.org/extend/plugins/json-api/other_notes/) section for complete API documentation.
 
 == Installation ==
 
@@ -54,6 +54,23 @@ JSON API operates in two modes:
 * `http://www.example.org/api/get_recent_posts/`
 * `http://www.example.org/api/get_post/?post_id=47`
 * `http://www.example.org/api/get_tag_posts/?tag_slug=banana`
+
+== Controllers ==
+
+The 1.0 release of JSON API introduced a modular controller system. This allows developers to flexibly add features to the API and give users more control over which methods they have enabled.
+
+= The Core controller =
+
+Most of the methods available prior to version 1.0 have been moved to the Core controller. The two exceptions are `submit_comment` and `create_post` which are now available from the Respond and Posts controllers, respectively. The Core controller is the only one enabled by default. All other functionality must be enabled from the JSON API Settings page (under Settings in the WordPress admin menu).
+
+= Specifying a controller =
+
+There are a few ways of specifying a controller, depending on how you are calling the API:
+
+* `http://www.example.org/?json=respond/submit_comment` (`respond` controller is specified)
+* `http://www.example.org/?json=get_recent_posts` (`core` controller is implied if none is included)
+* `http://www.example.org/api/core/get_category_posts/` (`core` controller is explicitly specified)
+* `http://www.example.org/api/info/` (`core` controller is implied)
 
 == Responses ==
 
@@ -111,13 +128,15 @@ Here is an example response from `http://localhost/wordpress/?json=1` called on 
 The JSON API reference is split into the following sections:
 
 1. Core methods
+1. Posts methods
+1. Respond methods
 1. Response objects
 1. Request arguments
 1. Plugin hooks
 1. Extending JSON API
 
 
-== 1. Core methods ==
+== 1. Core controller methods ==
 
 The Core controller offers a mostly-complete set of introspection methods for retrieving content from WordPress.
 
@@ -162,7 +181,7 @@ Returns information about JSON API.
         "get_author_index",
         "get_nonce"
       ],
-      "docs": "http:\/\/wordpress.org\/extend\/plugins\/json-api\/other_notes\/"
+      "docs": "http:\/\/wordpress.org\/extend\/plugins\/json-api\/other_notes\/#Core"
     }
     
 
@@ -463,6 +482,7 @@ Returns a hierarchical tree of `page` posts.
       ]
     }
 
+= 2. Pages controller methods =
 
 == Method: create_post ==
 
@@ -478,6 +498,9 @@ Creates a new post.
 * `tags` - a comma-separated list of tags (URL slugs)
 
 Note: including a file upload field called `attachment` will cause an attachment to be stored with your new post.
+
+
+= 3. Respond controller methods =
 
 == Method: submit_comment ==
 
@@ -502,7 +525,7 @@ Submits a comment to a WordPress post.
 * `pending` - assigned if the comment submission is pending moderation
 
 
-== 2. Response objects ==
+== 4. Response objects ==
 
 This section describes data objects you can retrieve from WordPress and the optional URL redirects.
 
@@ -587,7 +610,7 @@ Note: You can include additional values by setting the `author_meta` argument to
 * `images` - Object with values `thumbnail`, `medium`, `large`, `full`, each of which are objects with values `url`, `width` and `height` (only set if the attachment is an image)
 
 
-== 3. Request arguments ==
+== 5. Request arguments ==
 
 The following arguments modify how you get results back from the API. The redirect response styles are intended for use with the data manipulation methods.
 
@@ -638,7 +661,7 @@ For example calling an API method with `redirect` set to `http://www.example.com
 You can also set separate URLs to handle status values differently. You could set `redirect_ok` to `http://www.example.com/handle_ok` and `redirect_error` to `http://www.example.com/handle_error` in order to have more fine-tuned control over the method result.
 
 
-== 4. Plugin hooks ==
+== 6. Plugin hooks ==
 
 JSON API exposes several [action and filter hooks](http://codex.wordpress.org/Plugin_API#Hooks.2C_Actions_and_Filters) to augment its behavior.
 
@@ -660,10 +683,10 @@ This filter controls the array of controllers available to JSON API. The callbac
 
 == Filter: json_api_*controller*_controller_path
 
-Allows you to specify the PHP source file for a given controller, overriding the default location `wp-content/plugins/json_api/controllers`.
+Specifies the PHP source file for a given controller, overriding the default location `wp-content/plugins/json_api/controllers`.
 
 __Note__  
-If you place a file called `mycontroller.php` in the controllers, folder JSON API will find it automatically.
+If you your controller file in the `json-api/controllers` folder JSON API will find it automatically.
 
 = Example =
 
@@ -673,24 +696,6 @@ If you place a file called `mycontroller.php` in the controllers, folder JSON AP
     function my_controller_path($default_path) {
       return '/path/to/mycontroller.php';
     }
-
-
-== Filter: json_api_method ==
-
-The return value of this filter determines which API method will be called.
-
-= Example =
-    
-    // Restrict to a single IP address
-    if ($_SERVER['REMOTE_ADDR'] != '1.2.3.4') {
-      add_filter('json_api_method', 'disable_json_api');
-    }
-    
-    function disable_json_api($method) {
-      // Returning false as the method disables JSON API
-      return false;
-    }
-
 
 == Filter: json_api_encode ==
 
@@ -730,6 +735,17 @@ Each JSON API method invokes an action when called.
     }
 
 == Changelog ==
+
+= 1.0 (???): =
+* Added JSON API Settings page to WP admin
+* JSON API officially drops support for PHP 4 (it was already broken)
+* Broke apart `JSON_API_Controller` into a modular controller system
+* Refactored `JSON_API_Query` to depend less on WordPress's `get_query_var` mechanism
+* Developer mode now shows response in JSON format
+* Complex post queries (as with `query_posts`) have improved support (hat tip zibitt)
+* Fixed a bug with `get_author_by_login` (hat tip Krzysztof Sobolewski)
+* Made image attachments more robust with `get_intermediate_image_sizes` (hat tip mimecine)
+* Improved post thumbnail support (hat tip nyamsprod)
 
 = 0.9.6 (2010-05-27): =
 * Fixed a bug introduced in 0.9.5

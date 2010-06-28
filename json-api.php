@@ -97,7 +97,6 @@ class JSON_API {
       
       $this->controller = new $controller_class();
       $method = $this->query->get_method($controller);
-      $method = apply_filters('json_api_method', $method);
       
       if ($method) {
         
