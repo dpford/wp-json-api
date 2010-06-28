@@ -331,6 +331,11 @@ class JSON_API {
     return $controllers;
   }
   
+  function controller_is_active($controller) {
+    $active_controllers = explode(',', get_option('json_api_controllers', 'core'));
+    return (in_array($controller, $active_controllers));
+  }
+  
   function update_controllers($controllers) {
     if (is_array($controllers)) {
       return implode(',', $controllers);

@@ -105,11 +105,30 @@ class JSON_API_Query {
       return false;
     }
     if (strpos($json, '/') === false) {
-      $controller = 'core';
+      return $this->get_legacy_controller($json);
     } else {
       list($controller, $method) = explode('/', $json);
     }
     return $controller;
+  }
+  
+  function get_legacy_controller($json) {
+    global $json_api;
+    if ($json == 'submit_comment') {
+      if ($json_api->controller_is_active('respond')) {
+        return 'respond';
+      } else {
+        $json_api->error("The 'submit_comment' method has been removed from the Core controller. To use this method you must enable the Respond controller from WP Admin > Settings > JSON API.");
+      }
+    } else if ($json == 'create_post') {
+      if ($json_api->controller_is_active('posts')) {
+        return 'posts';
+      } else {
+        $json_api->error("The 'create_post' method has been removed from the Core controller. To use this method you must enable the Posts controller from WP Admin > Settings > JSON API.");
+      }
+    } else {
+      return 'core';
+    }
   }
   
   function get_method($controller) {
