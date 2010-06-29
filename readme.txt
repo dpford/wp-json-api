@@ -63,7 +63,7 @@ Requests use a simple REST-style HTTP GET or POST. To invoke the API, include a 
 JSON API operates in two modes:
 
 1. *Implicit mode* is triggered by setting the `json` query var to a non-empty value on any WordPress page. The content that would normally appear on that page is returned in JSON format.
-2. *Explicit mode* is triggered by setting `json` to a known method string. See the *API Reference* section below for a complete method listing.
+2. *Explicit mode* is triggered by setting `json` to a known method string. See *Section 2: Request methods* for a complete method listing.
 
 = Implicit mode examples: =
 
@@ -84,7 +84,7 @@ JSON API operates in two modes:
 * `http://www.example.org/api/get_tag_posts/?tag_slug=banana`
 
 __Further reading__  
-See Section 3: Request arguments for more information about request arguments to modify the response.
+See *Section 3: Request arguments* for more information about request arguments to modify the response.
 
 == 1.2. Controllers ==
 
@@ -111,7 +111,7 @@ JSON API retains support for its pre-1.0 methods. For example, if you invoke the
 The current release includes three controllers: Core, Posts, and Respond. Developers are encouraged to suggest or submit additional controllers.
 
 __Further reading__  
-See Section 2: Request methods for a complete reference of available controllers and methods. For documentation on extending JSON API with new controllers see Section 5.2: Developing JSON API Controllers.
+See *Section 2: Request methods* for a complete reference of available controllers and methods. For documentation on extending JSON API with new controllers see *Section 5.2: Developing JSON API controllers*.
 
 == 1.3. Responses ==
 
@@ -166,7 +166,11 @@ Here is an example response from `http://localhost/wordpress/?json=1` called on 
 
 == 2. Request methods ==
 
-The JSON API reference is split into the following sections:
+Request methods are available from the following controllers:
+
+* Core controller - basic introspection methods
+* Posts controller - data manipulation methods for posts
+* Respond controller - comment/trackback submission methods
 
 == 2.1. Core controller methods ==
 
