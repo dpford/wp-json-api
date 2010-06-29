@@ -83,7 +83,11 @@ class JSON_API {
     $enabled_controllers = explode(',', get_option('json_api_controllers', 'core'));
     $active_controllers = array_intersect($available_controllers, $enabled_controllers);
     
-    if ($controller && in_array($controller, $active_controllers)) {
+    if ($controller) {
+      
+      if (!in_array($controller, $active_controllers)) {
+        $this->error("Unknown controller '$controller'.");
+      }
       
       $controller_path = $this->controller_path($controller);
       if (file_exists($controller_path)) {
@@ -380,6 +384,12 @@ class JSON_API {
     $dir = dirname(__FILE__);
     $controller_class = $this->controller_class($controller);
     return apply_filters("{$controller_class}_path", "$dir/controllers/$controller.php");
+  }
+  
+  function get_nonce_id($controller, $method) {
+    $controller = strtolower($controller);
+    $method = strtolower($method);
+    return "json_api-$controller-$method";
   }
   
   function flush_rewrite_rules() {

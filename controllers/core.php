@@ -239,15 +239,19 @@ class JSON_API_Core_Controller {
     global $json_api;
     extract($json_api->query->get(array('controller', 'method')));
     if ($controller && $method) {
+      $controller = strtolower($controller);
       if (!in_array($controller, $json_api->get_controllers())) {
         $json_api->error("Unknown controller '$controller'.");
-      } else if (!method_exists("JSON_API_{$controller}_Controller", $method)) {
+      }
+      require_once $json_api->controller_path($controller);
+      if (!method_exists($json_api->controller_class($controller), $method)) {
         $json_api->error("Unknown method '$method'.");
       }
+      $nonce_id = $json_api->get_nonce_id($controller, $method);
       return array(
         'controller' => $controller,
         'method' => $method,
-        'nonce' => wp_create_nonce("json_api-$controller-$method")
+        'nonce' => wp_create_nonce($nonce_id)
       );
     } else {
       $json_api->error("Include 'controller' and 'method' vars in your request.");

@@ -104,12 +104,13 @@ class JSON_API_Query {
     if (empty($json)) {
       return false;
     }
-    if (strpos($json, '/') === false) {
+    if (preg_match('/^[a-zA-Z_]+$/', $json)) {
       return $this->get_legacy_controller($json);
+    } else if (preg_match('/^([a-zA-Z_]+)(\/|\.)[a-zA-Z_]+$/', $json, $matches)) {
+      return $matches[1];
     } else {
-      list($controller, $method) = explode('/', $json);
+      return 'error';
     }
-    return $controller;
   }
   
   function get_legacy_controller($json) {
@@ -149,6 +150,11 @@ class JSON_API_Query {
     //     * http://example.org/category/foo?json=1 (get_category_posts)
     
     $method = $this->get('json');
+    if (strpos($method, '/') !== false) {
+      $method = substr($method, strpos($method, '/') + 1);
+    } else if (strpos($method, '.') !== false) {
+      $method = substr($method, strpos($method, '.') + 1);
+    }
     
     if (empty($method)) {
       // Case 1: we're not being invoked (done!)
