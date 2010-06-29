@@ -14,7 +14,7 @@ JSON API allows you to retrieve and manipulate WordPress content using HTTP requ
 
 1. Provide a simple, consistent external interface
 2. Create a stable, understandable internal implementation
-3. Support new kinds of extensions of WordPress
+3. Enable new types of extensions for WordPress
 
 This plugin was created at [The Museum of Modern Art](http://moma.org/) for the weblog [Inside/Out](http://moma.org/explore/inside_out), which is served from Ruby on Rails. Instead of reimplementing the site templates as a WordPress theme, we opted for a Rails front-end that displays content served from a WordPress back-end. JSON API provides the necessary interface for retrieving content and accepting comment submissions.
 
@@ -198,22 +198,8 @@ Returns information about JSON API.
       "name": "Core",
       "description": "Basic introspection methods",
       "methods": [
-        "info",
-        "get_recent_posts",
-        "get_post",
-        "get_page",
-        "get_date_posts",
-        "get_category_posts",
-        "get_tag_posts",
-        "get_author_posts",
-        "get_search_results",
-        "get_date_index",
-        "get_category_index",
-        "get_tag_index",
-        "get_author_index",
-        "get_nonce"
-      ],
-      "docs": "http:\/\/wordpress.org\/extend\/plugins\/json-api\/other_notes\/#Core"
+        ...
+      ]
     }
     
 
@@ -286,7 +272,7 @@ Returns an array of posts/pages in a specific category.
 = One of the following is required =
 
 * Invoking the JSON API implicitly (i.e., `?json=1`) on a date archive page
-* `date` - set to a date in the format `YYYY` or `YYYY-MM` or `YYYY-MM-DD` (non-numeric characters are stripped from the var, so `YYYYMMDD` or `YYYY/MM/DD` also valid)
+* `date` - set to a date in the format `YYYY` or `YYYY-MM` or `YYYY-MM-DD` (non-numeric characters are stripped from the var, so `YYYYMMDD` or `YYYY/MM/DD` are also valid)
 
 = Optional arguments =
 
@@ -858,13 +844,14 @@ Now append the `name` query var to the method call: `http://www.example.org/api/
 
 == Changelog ==
 
-= 1.0 (???): =
+= 1.0 (2010-06-29): =
 * JSON API officially drops support for PHP 4 (it was already broken)
 * Added JSON API Settings page to WP admin
 * Broke apart `JSON_API_Controller` into a modular controller system
 * Refactored `JSON_API_Query` to depend less on WordPress's `get_query_var` mechanism
 * Developer mode now shows response in JSON format
-* Complex post queries (as with `query_posts`) have improved support (props zibitt)
+* The `create_post` method now requires a nonce
+* Improved support for complex post queries (props zibitt)
 * Fixed a bug with `get_author_by_login` (props Krzysztof Sobolewski)
 * Made image attachments more robust with `get_intermediate_image_sizes` (props mimecine)
 * Improved post thumbnail support (props nyamsprod)

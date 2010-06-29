@@ -332,8 +332,7 @@ class JSON_API {
         $controllers[] = $matches[1];
       }
     }
-    $controllers = apply_filters('json_api_controllers', $controllers);
-    return $controllers;
+    return apply_filters('json_api_controllers', $controllers);
   }
   
   function controller_is_active($controller) {
@@ -372,7 +371,7 @@ class JSON_API {
       $response['methods'] = get_class_methods($class);
       return $response;
     } else {
-      $json_api->error("Unknown controller '$controller'.");
+      $this->error("Unknown controller '$controller'.");
     }
   }
   
