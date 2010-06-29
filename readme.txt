@@ -737,15 +737,15 @@ Each JSON API method invokes an action when called.
 == Changelog ==
 
 = 1.0 (???): =
+* JSON API officially drops support for PHP 4 (it was already broken anyway)
 * Added JSON API Settings page to WP admin
-* JSON API officially drops support for PHP 4 (it was already broken)
 * Broke apart `JSON_API_Controller` into a modular controller system
 * Refactored `JSON_API_Query` to depend less on WordPress's `get_query_var` mechanism
 * Developer mode now shows response in JSON format
-* Complex post queries (as with `query_posts`) have improved support (hat tip zibitt)
-* Fixed a bug with `get_author_by_login` (hat tip Krzysztof Sobolewski)
-* Made image attachments more robust with `get_intermediate_image_sizes` (hat tip mimecine)
-* Improved post thumbnail support (hat tip nyamsprod)
+* Complex post queries (as with `query_posts`) have improved support (props zibitt)
+* Fixed a bug with `get_author_by_login` (props Krzysztof Sobolewski)
+* Made image attachments more robust with `get_intermediate_image_sizes` (props mimecine)
+* Improved post thumbnail support (props nyamsprod)
 
 = 0.9.6 (2010-05-27): =
 * Fixed a bug introduced in 0.9.5
