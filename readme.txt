@@ -740,7 +740,7 @@ This filter controls the array of controllers available to JSON API. The callbac
     }
 
 
-== Filter: json_api_[controller]_controller_path
+== Filter: json_api_[controller]_controller_path ==
 
 Specifies the PHP source file for a given controller, overriding the default location `wp-content/plugins/json_api/controllers`.
 
@@ -844,6 +844,9 @@ Now append the `name` query var to the method call: `http://www.example.org/api/
 
 == Changelog ==
 
+= 1.0.1 (???): =
+* Fixed a typo in readme.txt ("Filter: json_api_[controller]_controller_path")
+
 = 1.0 (2010-06-29): =
 * JSON API officially drops support for PHP 4 (it was already broken)
 * Added JSON API Settings page to WP admin
@@ -908,6 +911,9 @@ Now append the `name` query var to the method call: `http://www.example.org/api/
 * Initial Public Release
 
 == Upgrade Notice ==
+
+= 1.0.1 =
+Minor bugfix release
 
 = 1.0 =
 Major release, see changelog for details.
