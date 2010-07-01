@@ -150,7 +150,7 @@ class JSON_API_Core_Controller {
       $json_api->error("Not found.");
     }
     $posts = $json_api->introspector->get_posts(array(
-      'tag_id' => $tag->id
+      'tag' => $tag->slug
     ));
     return $this->posts_object_result($posts, $tag);
   }

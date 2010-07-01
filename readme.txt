@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
 Tested up to: 3.0
-Stable tag: 1.0
+Stable tag: 1.0.1
 
 A RESTful API for WordPress
 
@@ -848,8 +848,10 @@ Now append the `name` query var to the method call: `http://www.example.org/api/
 
 == Changelog ==
 
-= 1.0.1 (???): =
-* Fixed a typo in readme.txt ("Filter: json_api_[controller]_controller_path")
+= 1.0.1 (2010-07-01): =
+* Fixed some typos in readme.txt
+* Expanded developer documentation in readme.txt
+* Switched `get_tag_posts` to query on tag instead of tag_id (maybe a WordPress issue?)
 
 = 1.0 (2010-06-29): =
 * JSON API officially drops support for PHP 4 (it was already broken)
@@ -917,7 +919,7 @@ Now append the `name` query var to the method call: `http://www.example.org/api/
 == Upgrade Notice ==
 
 = 1.0.1 =
-Minor bugfix release
+Bugfix release, possibly stemming from a bug in WordPress 3.0
 
 = 1.0 =
 Major release, see changelog for details.
