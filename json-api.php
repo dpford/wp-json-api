@@ -3,7 +3,7 @@
 Plugin Name: JSON API
 Plugin URI: http://wordpress.org/extend/plugins/json-api/
 Description: A RESTful API for WordPress
-Version: 1.0.1
+Version: 1.0.2
 Author: Dan Phiffer
 Author URI: http://phiffer.org/
 */
@@ -204,8 +204,20 @@ class JSON_API {
         
         foreach ($available_controllers as $controller) {
           
+          $error = false;
           $active = in_array($controller, $active_controllers);
           $info = $this->controller_info($controller);
+          
+          if (is_string($info)) {
+            $active = false;
+            $error = true;
+            $info = array(
+              'name' => $controller,
+              'description' => "<p><strong>Error</strong>: $info</p>",
+              'methods' => array(),
+              'url' => null
+            );
+          }
           
           ?>
           <tr class="<?php echo ($active ? 'active' : 'inactive'); ?>">
@@ -219,7 +231,7 @@ class JSON_API {
                 
                 if ($active) {
                   echo '<a href="' . wp_nonce_url('options-general.php?page=json-api&amp;action=deactivate&amp;controller=' . $controller, 'update-options') . '" title="' . __('Deactivate this controller') . '" class="edit">' . __('Deactivate') . '</a>';
-                } else {
+                } else if (!$error) {
                   echo '<a href="' . wp_nonce_url('options-general.php?page=json-api&amp;action=activate&amp;controller=' . $controller, 'update-options') . '" title="' . __('Activate this controller') . '" class="edit">' . __('Activate') . '</a>';
                 }
                   
@@ -332,7 +344,8 @@ class JSON_API {
         $controllers[] = $matches[1];
       }
     }
-    return apply_filters('json_api_controllers', $controllers);
+    $controllers = apply_filters('json_api_controllers', $controllers);
+    return array_map('strtolower', $controllers);
   }
   
   function controller_is_active($controller) {
@@ -358,21 +371,26 @@ class JSON_API {
     );
     if (file_exists($path)) {
       $source = file_get_contents($path);
-      if (preg_match('/^\s*Name:(.+)$/im', $source, $matches)) {
+      if (preg_match('/^\s*Controller name:(.+)$/im', $source, $matches)) {
         $response['name'] = trim($matches[1]);
       }
-      if (preg_match('/^\s*Description:(.+)$/im', $source, $matches)) {
+      if (preg_match('/^\s*Controller description:(.+)$/im', $source, $matches)) {
         $response['description'] = trim($matches[1]);
       }
-      if (preg_match('/^\s*Docs:(.+)$/im', $source, $matches)) {
+      if (preg_match('/^\s*Controller URI:(.+)$/im', $source, $matches)) {
         $response['docs'] = trim($matches[1]);
       }
-      require_once($path);
+      if (!class_exists($class)) {
+        require_once($path);
+      }
       $response['methods'] = get_class_methods($class);
       return $response;
+    } else if (is_admin()) {
+      return "Cannot find controller class '$class' (filtered path: $path).";
     } else {
       $this->error("Unknown controller '$controller'.");
     }
+    return $response;
   }
   
   function controller_class($controller) {

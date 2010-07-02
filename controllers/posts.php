@@ -1,8 +1,7 @@
 <?php
 /*
-Name: Posts
-Description: Data manipulation methods for posts
-URL: 
+Controller name: Posts
+Controller description: Data manipulation methods for posts
 */
 
 class JSON_API_Posts_Controller {

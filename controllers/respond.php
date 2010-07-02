@@ -1,8 +1,7 @@
 <?php
 /*
-Name: Respond
-Description: Comment/trackback submission methods
-URL:
+Controller name: Respond
+Controller description: Comment/trackback submission methods
 */
 
 class JSON_API_Respond_Controller {

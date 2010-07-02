@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
 Tested up to: 3.0
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 
 A RESTful API for WordPress
 
@@ -42,7 +42,7 @@ See the [Other Notes](http://wordpress.org/extend/plugins/json-api/other_notes/)
 3. Request arguments  
    3.1. Output-modifying arguments  
    3.2. Content-modifying arguments  
-   3.3. Using query_posts, include/exclude, and redirects  
+   3.3. Using include/exclude and redirects  
 4. Response objects  
    4.1. Post response object  
    4.2. Category response object  
@@ -616,15 +616,12 @@ These arguments are available to modify all introspection methods:
   * `comment_count`
 * `meta_key`, `meta_value`, `meta_compare` - Retrieve posts (or Pages) based on a custom field key or value.
 
-== 3.3. Using query_posts, include/exclude, and redirects ==
-
-__Additional arguments__
-JSON API is based on the same rules as the [`query_posts` template tag](http://codex.wordpress.org/Template_Tags/query_posts). Any query arguments that can be used to augment a call to `query_posts` can also be passed as a URL query variable to achieve the same results.
+== 3.3. Using include/exclude and redirects ==
 
 __About `include`/`exclude` arguments__  
 By default you get all values included with each post object. Specify a list of `include` values will cause the post object to filter out the values absent from the list. Specifying `exclude` causes post objects to include all values except the fields you list. For example, the query `exclude=comments` includes everything *except* the comments.
 
-__About the `redirect` argument__
+__About the `redirect` argument__  
 The `redirect` response style is useful for when you need the user's browser to make a request directly rather than making proxy requests using a tool like cURL. Setting a `redirect` argument causes the user's browser to redirect back to the specified URL instead of returning a JSON object. The resulting `status` value is included as an extra query variable.
 
 For example calling an API method with `redirect` set to `http://www.example.com/foo` will result in a redirection to one of the following:
@@ -753,12 +750,15 @@ If you your controller file in the `json-api/controllers` folder JSON API will f
 
 = Example =
 
-    // Add a custom controller file for MyController
-    add_filter('json_api_mycontroller_controller', 'my_controller_path');
+    // Register the source file for JSON_API_Widgets_Controller
+    add_filter('json_api_widgets_controller_path', 'widgets_controller_path');
     
-    function my_controller_path($default_path) {
-      return '/path/to/mycontroller.php';
+    function widgets_controller_path($default_path) {
+      return '/path/to/widgets.php';
     }
+
+__Capitalization__  
+Your filter hook must be all-lowercase to work correctly. The above example would fail with the filter `json_api_Widgets_Controller_path`, even if that's how the class is capitalized in the PHP source.
 
 == Filter: json_api_encode ==
 
@@ -845,12 +845,48 @@ Now append the `name` query var to the method call: `http://www.example.org/api/
       "message": "Hello, Alice"
     }
 
+= Introspector and data models =
+
+Your controller can use any of the [existing WordPress functions](http://codex.wordpress.org/Function_Reference) to collect data, but JSON API also includes an introspector that wraps data in objects defined in the `json-api/models` directory. These are the same data models described in *Section 4: Response objects*.
+
+Here is an example of how you might use the introspector:
+
+    // Retrieve posts based on custom field key/value pair
+    public function get_custom_posts() {
+      global $json_api;
+      
+      // Make sure we have key/value query vars
+      if (!$json_api->query->key || !$json_api->query->value) {
+        $json_api->error("Include a 'key' and 'value' query var.");
+      }
+      
+      // See also: http://codex.wordpress.org/Template_Tags/query_posts
+      $posts = $json_api->introspector->get_posts(array(
+        'meta_key' => $json_api->query->key,
+        'meta_value' => $json_api->query->value
+      ));
+      
+      return array(
+        'key' => $key,
+        'value' => $value,
+        'posts' => $posts
+      );
+    }
+
 
 == Changelog ==
 
+= 1.0.2 (2007-07-02): =
+* Removed an inaccurate section from readme.txt about supporting `query_posts` arguments
+* Changed controller info block format to use "Controller name" and "Controller description"
+* Made admin page more robust about handling errors loading controllers
+* Changed `JSON_API::get_controllers` method to lowercase all entries
+* Added introspector section to developer documentation
+* Fixed incorrect example for `json_api_[controller]_controller_path`
+* Thanks to Tim Nash for early feedback on writing external controllers
+
 = 1.0.1 (2010-07-01): =
 * Fixed some typos in readme.txt
-* Expanded developer documentation in readme.txt
 * Switched `get_tag_posts` to query on tag instead of tag_id (maybe a WordPress issue?)
 
 = 1.0 (2010-06-29): =
@@ -917,6 +953,9 @@ Now append the `name` query var to the method call: `http://www.example.org/api/
 * Initial Public Release
 
 == Upgrade Notice ==
+
+= 1.0.2 =
+Minor bugfix release
 
 = 1.0.1 =
 Bugfix release, possibly stemming from a bug in WordPress 3.0

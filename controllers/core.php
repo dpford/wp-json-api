@@ -1,7 +1,7 @@
 <?php
 /*
-Name: Core
-Description: Basic introspection methods
+Controller name: Core
+Controller description: Basic introspection methods
 */
 
 class JSON_API_Core_Controller {
