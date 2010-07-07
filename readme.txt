@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
 Tested up to: 3.0
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 
 A RESTful API for WordPress
 
@@ -53,6 +53,7 @@ See the [Other Notes](http://wordpress.org/extend/plugins/json-api/other_notes/)
 5. Extending JSON API  
    5.1. Plugin hooks  
    5.2. Developing JSON API controllers  
+   5.3. Configuration options
 
 == 1. General Concepts ==
 
@@ -878,7 +879,35 @@ Here is an example of how you might use the introspector:
       );
     }
 
+= External controllers =
+
+It is recommended that custom controllers are kept outside of `json-api/controllers` in order to avoid accidental deletion during upgrades or site migrations. To make your controller visible from an external plugin or theme directory you will need to use two filters: `json_api_controllers` and `json_api_[controller]_controller_path`. Move the `hello.php` file from the steps above into your theme's directory. Then add the following to your theme's `functions.php` file (if your theme doesn't have a file called `functions.php` you can create one).
+
+    function add_hello_controller($controllers) {
+      $controllers[] = 'hello';
+    }
+    add_filter('json_api_controllers', 'add_hello_controller');
+    
+    function set_hello_controller_path() {
+      return "/path/to/theme/hello.php";
+    }
+    add_filter('json_api_hello_controller_path', 'set_hello_controller_path');
+
+== 5.3. Configuration options ==
+
+The following are constants you can define in your `wp-config.php` folder:
+
+* `JSON_API_DIR` - set to the directory where JSON API plugin lives (in some cases this can be useful for `mu-plugins` with WordPress MU)
+* `JSON_API_CONTROLLERS` - a comma-separated list of default controllers to enable (this is overridden by the JSON API settings page)
+
 == Changelog ==
+
+= 1.0.4 (2010-07-07): =
+* Fixed a bug where the order of attachments didn't match the gallery
+* Added a section to the developer documentation for externalizing custom controllers
+* Moved JSON_API class to its own file: `singletons/api.php`
+* Created a new top-level function: `json_api_dir()`
+* Improvements for WordPress MU: `JSON_API_DIR` and `JSON_API_CONTROLLERS` constants (props Jim McQuillan)
 
 = 1.0.3 (2010-07-07): =
 * Added request argument `thumbnail_size` to support different sizes of featured images (see also: `add_image_size` WordPress function)
@@ -961,6 +990,9 @@ Here is an example of how you might use the introspector:
 * Initial Public Release
 
 == Upgrade Notice ==
+
+= 1.0.4 =
+Minor bugfix/refactor release
 
 = 1.0.3 =
 Two new request arguments added: `thumbnail_size` and `post_type`

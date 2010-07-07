@@ -31,7 +31,7 @@ class JSON_API_Response {
     } else {
       // Use PEAR's Services_JSON encoder otherwise
       if (!class_exists('Services_JSON')) {
-        $dir = dirname(dirname(__FILE__));
+        $dir = json_api_dir();
         require_once "$dir/library/JSON.php";
       }
       $json = new Services_JSON();

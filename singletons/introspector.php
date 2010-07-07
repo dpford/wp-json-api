@@ -207,7 +207,12 @@ class JSON_API_Introspector {
   }
   
   public function get_attachments($post_id) {
-    $wp_attachments = get_children("post_type=attachment&post_parent=$post_id");
+    $wp_attachments = get_children(array(
+      'post_type' => 'attachment',
+      'post_parent' => $post_id,
+      'orderby' => 'menu_order',
+      'order' => 'ASC'
+    ));
     $attachments = array();
     if (!empty($wp_attachments)) {
       foreach ($wp_attachments as $wp_attachment) {

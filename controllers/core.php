@@ -11,7 +11,7 @@ class JSON_API_Core_Controller {
     if (!empty($json_api->query->controller)) {
       return $json_api->controller_info($json_api->query->controller);
     } else {
-      $dir = dirname(dirname(__FILE__));
+      $dir = json_api_dir();
       $php = file_get_contents("$dir/json-api.php");
       if (preg_match('/^\s*Version:\s*(.+)$/m', $php, $matches)) {
         $version = $matches[1];
