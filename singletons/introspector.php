@@ -276,6 +276,10 @@ class JSON_API_Introspector {
       $query['posts_per_page'] = $json_api->query->count;
     }
     
+    if ($json_api->query->post_type) {
+      $query['post_type'] = $json_api->query->post_type;
+    }
+    
     if (!empty($query)) {
       query_posts($query);
     }

@@ -266,7 +266,10 @@ class JSON_API_Post {
   }
   
   function get_thumbnail_size() {
-    if (function_exists('get_intermediate_image_sizes')) {
+    global $json_api;
+    if ($json_api->query->thumbnail_size) {
+      return $json_api->query->thumbnail_size;
+    } else if (function_exists('get_intermediate_image_sizes')) {
       $sizes = get_intermediate_image_sizes();
       if (in_array('post-thumbnail', $sizes)) {
         return 'post-thumbnail';

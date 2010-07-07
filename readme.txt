@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
 Tested up to: 3.0
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 
 A RESTful API for WordPress
 
@@ -213,7 +213,9 @@ Returns an array of recent posts. You can invoke this from the WordPress home pa
 
 = Optional arguments =
 
+* `count` - determines how many posts per page are returned (default value is 10)
 * `page` - return a specific page number from the results
+* `post_type` - used to retrieve custom post types
 
 = Response =
 
@@ -664,6 +666,9 @@ Developers familiar with WordPress may notice that many names for properties and
 * `thumbnail` - String (only included if a post thumbnail has been specified)
 * `custom_fields` - Object (included by setting the `custom_fields` argument to a comma-separated list of custom field names)
 
+__Note__  
+The `thumbnail` attribute returns a URL to the image size specified by the optional `thumbnail_size` request argument. By default this will use the `thumbnail` or `post-thumbnail` sizes, depending on your version of WordPress. See [Mark Jaquith's post on the topic](http://markjaquith.wordpress.com/2009/12/23/new-in-wordpress-2-9-post-thumbnail-images/) for more information.
+
 == 4.2. Category response object ==
 
 * `id` - Integer
@@ -873,10 +878,13 @@ Here is an example of how you might use the introspector:
       );
     }
 
-
 == Changelog ==
 
-= 1.0.2 (2007-07-02): =
+= 1.0.3 (2010-07-07): =
+* Added request argument `thumbnail_size` to support different sizes of featured images (see also: `add_image_size` WordPress function)
+* Added request argument `post_type` to support custom post types (props Mark Harris)
+
+= 1.0.2 (2010-07-02): =
 * Removed an inaccurate section from readme.txt about supporting `query_posts` arguments
 * Changed controller info block format to use "Controller name" and "Controller description"
 * Made admin page more robust about handling errors loading controllers
@@ -953,6 +961,9 @@ Here is an example of how you might use the introspector:
 * Initial Public Release
 
 == Upgrade Notice ==
+
+= 1.0.3 =
+Two new request arguments added: `thumbnail_size` and `post_type`
 
 = 1.0.2 =
 Minor bugfix release
