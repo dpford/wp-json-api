@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
 Tested up to: 3.0
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 
 A RESTful API for WordPress
 
@@ -196,6 +196,7 @@ Returns information about JSON API.
       ]
     }
 
+  
 = Response =
 
     {
@@ -283,7 +284,9 @@ Returns an array of posts/pages in a specific category.
 
 = Optional arguments =
 
+* `count` - determines how many posts per page are returned (default value is 10)
 * `page` - return a specific page number from the results
+* `post_type` - used to retrieve custom post types
 
 = Response =
 
@@ -311,7 +314,9 @@ Returns an array of posts/pages in a specific category.
 
 = Optional arguments =
 
+* `count` - determines how many posts per page are returned (default value is 10)
 * `page` - return a specific page number from the results
+* `post_type` - used to retrieve custom post types
 
 = Response =
 
@@ -341,7 +346,9 @@ Returns an array of posts/pages with a specific tag.
 
 = Optional arguments =
 
+* `count` - determines how many posts per page are returned (default value is 10)
 * `page` - return a specific page number from the results
+* `post_type` - used to retrieve custom post types
 
 = Response =
 
@@ -371,7 +378,9 @@ Returns an array of posts/pages written by a specific author.
 
 = Optional arguments =
 
+* `count` - determines how many posts per page are returned (default value is 10)
 * `page` - return a specific page number from the results
+* `post_type` - used to retrieve custom post types
 
 = Response =
 
@@ -400,7 +409,9 @@ Returns an array of posts/pages in response to a search query.
 
 = Optional arguments =
 
+* `count` - determines how many posts per page are returned (default value is 10)
 * `page` - return a specific page number from the results
+* `post_type` - used to retrieve custom post types
 
 = Response =
 
@@ -513,8 +524,8 @@ Returns a WordPress nonce value, required to call some data manipulation methods
 
 = Required arguments =
 
-* `controller` - the JSON API controller
-* `method` - the JSON API method
+* `controller` - the JSON API controller for the method you will use the nonce for
+* `method` - the method you wish to call (currently `create_post` is the only method that requires a nonce)
 
 = Response =
 
@@ -525,6 +536,8 @@ Returns a WordPress nonce value, required to call some data manipulation methods
       "nonce": "cefe01efd4"
     }
 
+__Further reading__  
+To learn more about how nonces are used in WordPress, see [Mark Jaquith's article on the subject](http://markjaquith.wordpress.com/2006/06/02/wordpress-203-nonces/).
 
 = 2.2. Pages controller methods =
 
@@ -534,7 +547,7 @@ Creates a new post.
 
 = Required argument =
 
-* `nonce` - a security check value, available from the `get_nonce` method
+* `nonce` - available from the `get_nonce` method (call with vars `controller=posts` and `method=create_post`)
 
 = Optional arguments =
 
@@ -902,6 +915,10 @@ The following are constants you can define in your `wp-config.php` folder:
 
 == Changelog ==
 
+= 1.0.5 (2010-07-08): =
+* Added an check so that `json-api.php` can be moved one level above the `json-api` directory
+* Added more documentation about using nonces
+
 = 1.0.4 (2010-07-07): =
 * Fixed a bug where the order of attachments didn't match the gallery
 * Added a section to the developer documentation for externalizing custom controllers
@@ -990,6 +1007,9 @@ The following are constants you can define in your `wp-config.php` folder:
 * Initial Public Release
 
 == Upgrade Notice ==
+
+= 1.0.5 =
+Minor improvement release
 
 = 1.0.4 =
 Minor bugfix/refactor release

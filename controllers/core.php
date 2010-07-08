@@ -8,11 +8,20 @@ class JSON_API_Core_Controller {
   
   public function info() {
     global $json_api;
+    $php = '';
     if (!empty($json_api->query->controller)) {
       return $json_api->controller_info($json_api->query->controller);
     } else {
       $dir = json_api_dir();
-      $php = file_get_contents("$dir/json-api.php");
+      if (file_exists("$dir/json-api.php")) {
+        $php = file_get_contents("$dir/json-api.php");
+      } else {
+        // Check one directory up, in case json-api.php was moved
+        $dir = dirname($dir);
+        if (file_exists("$dir/json-api.php")) {
+          $php = file_get_contents("$dir/json-api.php");
+        }
+      }
       if (preg_match('/^\s*Version:\s*(.+)$/m', $php, $matches)) {
         $version = $matches[1];
       } else {
