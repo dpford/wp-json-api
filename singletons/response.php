@@ -12,6 +12,9 @@ class JSON_API_Response {
       $exclude = explode(',', $json_api->query->exclude);
       $this->include_values = array_diff($this->include_values, $exclude);
     }
+    
+    // Compatibility with Disqus plugin
+    remove_action('loop_end', 'dsq_loop_end');
   }
   
   function get_json($data, $status = 'ok') {
@@ -54,6 +57,7 @@ class JSON_API_Response {
     if ($json_api->query->dev || !empty($_REQUEST['dev'])) {
       // Output the result in a human-redable format
       if (!headers_sent()) {
+        header('HTTP/1.1 200 OK');
         header('Content-Type: text/plain; charset: UTF-8', true);
       } else {
         echo '<pre>';
@@ -77,6 +81,7 @@ class JSON_API_Response {
   function output($result) {
     $charset = get_option('blog_charset');
     if (!headers_sent()) {
+      header('HTTP/1.1 200 OK', true);
       header("Content-Type: application/json; charset=$charset", true);
       header("Content-Disposition: attachment; filename=\"json_api.json\"", true);
     }
@@ -86,6 +91,7 @@ class JSON_API_Response {
   function callback($callback, $result) {
     $charset = get_option('blog_charset');
     if (!headers_sent()) {
+      header('HTTP/1.1 200 OK', true);
       header("Content-Type: application/javascript; charset=$charset", true);
     }
     echo "$callback($result)";
