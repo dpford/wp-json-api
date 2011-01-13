@@ -5,12 +5,14 @@ class JSON_API_Response {
   function setup() {
     global $json_api;
     $this->include_values = array();
+    $this->exclude_values = array();
     if ($json_api->query->include) {
       $this->include_values = explode(',', $json_api->query->include);
     }
+    // Props to ikesyo for submitting a fix!
     if ($json_api->query->exclude) {
-      $exclude = explode(',', $json_api->query->exclude);
-      $this->include_values = array_diff($this->include_values, $exclude);
+      $this->exclude_values = explode(',', $json_api->query->exclude);
+      $this->include_values = array_diff($this->include_values, $this->exclude_values);
     }
     
     // Compatibility with Disqus plugin
@@ -43,10 +45,15 @@ class JSON_API_Response {
   }
   
   function is_value_included($key) {
-    if (empty($this->include_values)) {
+    // Props to ikesyo for submitting a fix!
+    if (empty($this->include_values) && empty($this->exclude_values)) {
       return true;
     } else {
-      return in_array($key, $this->include_values);
+      if (empty($this->exclude_values)) {
+        return in_array($key, $this->include_values);
+      } else {
+        return !in_array($key, $this->exclude_values);
+      }
     }
   }
   
