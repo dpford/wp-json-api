@@ -228,11 +228,14 @@ class JSON_API_Core_Controller {
   public function get_page_index() {
     global $json_api;
     $pages = array();
+    // Thanks to blinder for the fix!
+    $numberposts = empty($json_api->query->count) ? -1 : $json_api->query->count;
     $wp_posts = get_posts(array(
       'post_type' => 'page',
       'post_parent' => 0,
       'order' => 'ASC',
-      'orderby' => 'menu_order'
+      'orderby' => 'menu_order',
+      'numberposts' => $numberposts
     ));
     foreach ($wp_posts as $wp_post) {
       $pages[] = new JSON_API_Post($wp_post);
