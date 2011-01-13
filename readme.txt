@@ -539,7 +539,7 @@ Returns a WordPress nonce value, required to call some data manipulation methods
 __Further reading__  
 To learn more about how nonces are used in WordPress, see [Mark Jaquith's article on the subject](http://markjaquith.wordpress.com/2006/06/02/wordpress-203-nonces/).
 
-= 2.2. Pages controller methods =
+== 2.2. Pages controller methods ==
 
 == Method: create_post ==
 
@@ -561,7 +561,7 @@ Creates a new post.
 Note: including a file upload field called `attachment` will cause an attachment to be stored with your new post.
 
 
-= 2.3. Respond controller methods =
+== 2.3. Respond controller methods ==
 
 == Method: submit_comment ==
 
