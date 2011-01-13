@@ -90,7 +90,6 @@ class JSON_API_Response {
     if (!headers_sent()) {
       header('HTTP/1.1 200 OK', true);
       header("Content-Type: application/json; charset=$charset", true);
-      header("Content-Disposition: attachment; filename=\"json_api.json\"", true);
     }
     echo $result;
   }
