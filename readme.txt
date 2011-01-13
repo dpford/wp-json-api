@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
 Tested up to: 3.0
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 
 A RESTful API for WordPress
 
@@ -898,6 +898,7 @@ It is recommended that custom controllers are kept outside of `json-api/controll
 
     function add_hello_controller($controllers) {
       $controllers[] = 'hello';
+      return $controllers;
     }
     add_filter('json_api_controllers', 'add_hello_controller');
     
@@ -914,6 +915,14 @@ The following are constants you can define in your `wp-config.php` folder:
 * `JSON_API_CONTROLLERS` - a comma-separated list of default controllers to enable (this is overridden by the JSON API settings page)
 
 == Changelog ==
+
+= 1.0.6 (2011-01-13): =
+* Fixed a bug in `exclude` query parameter (big props to ikesyo and archon810)
+* Fix for `get_page_index` that where it only returned 5 pages -- it now responds to `count` query param (props to npavkovic and blinder)
+* Removed `Content-Disposition` header from response (props mimecine, kjwierenga)
+* Fixed an incompatibility issue with Disqus plugin (props joshcanhelp)
+* Fixed a bug where `submit_comment` was resulting in a HTTP 404 status (props @tdweston)
+* Fixed an error in the documentation, external controller example (props jli)
 
 = 1.0.5 (2010-07-08): =
 * Added an check so that `json-api.php` can be moved one level above the `json-api` directory
@@ -1007,6 +1016,9 @@ The following are constants you can define in your `wp-config.php` folder:
 * Initial Public Release
 
 == Upgrade Notice ==
+
+= 1.0.6 =
+Minor bugfix/improvement release
 
 = 1.0.5 =
 Minor improvement release
