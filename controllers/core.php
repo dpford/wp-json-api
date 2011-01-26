@@ -31,7 +31,7 @@ class JSON_API_Core_Controller {
       $controllers = array_intersect($json_api->get_controllers(), $active_controllers);
       return array(
         'json_api_version' => $version,
-        'controllers' => $controllers
+        'controllers' => array_values($controllers)
       );
     }
   }
@@ -43,7 +43,7 @@ class JSON_API_Core_Controller {
   }
   
   public function get_post() {
-    global $json_api;
+    global $json_api, $post;
     extract($json_api->query->get(array('id', 'slug', 'post_id', 'post_slug')));
     if ($id || $post_id) {
       if (!$id) {
@@ -51,26 +51,37 @@ class JSON_API_Core_Controller {
       }
       $posts = $json_api->introspector->get_posts(array(
         'p' => $id
-      ));
+      ), true);
     } else if ($slug || $post_slug) {
       if (!$slug) {
         $slug = $post_slug;
       }
       $posts = $json_api->introspector->get_posts(array(
         'name' => $slug
-      ));
+      ), true);
     } else {
       $json_api->error("Include 'id' or 'slug' var in your request.");
     }
     if (count($posts) == 1) {
-      return array(
-        'post' => $posts[0]
+      $post = $posts[0];
+      $previous = get_adjacent_post(false, '', true);
+      $next = get_adjacent_post(false, '', false);
+      $post = new JSON_API_Post($post);
+      $response = array(
+        'post' => $post
       );
+      if ($previous) {
+        $response['previous_url'] = get_permalink($previous->ID);
+      }
+      if ($next) {
+        $response['next_url'] = get_permalink($next->ID);
+      }
+      return $response;
     } else {
       $json_api->error("Not found.");
     }
   }
-  
+
   public function get_page() {
     global $json_api;
     extract($json_api->query->get(array('id', 'slug', 'page_id', 'page_slug', 'children')));

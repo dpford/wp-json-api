@@ -3,8 +3,8 @@ Contributors: dphiffer
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DH4MEG99JR2WE
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
-Tested up to: 3.0
-Stable tag: 1.0.6
+Tested up to: 3.1
+Stable tag: 1.0.7
 
 A RESTful API for WordPress
 
@@ -54,6 +54,9 @@ See the [Other Notes](http://wordpress.org/extend/plugins/json-api/other_notes/)
    5.1. Plugin hooks  
    5.2. Developing JSON API controllers  
    5.3. Configuration options
+6. Unit tests
+   6.1. Preparing a WordPress test site
+   6.2. Running the tests
 
 == 1. General Concepts ==
 
@@ -244,6 +247,10 @@ Returns a single post object.
 * `id` or `post_id` - set to the post's ID
 * `slug` or `post_slug` - set to the post's URL slug
 
+= Optional arguments =
+
+* `post_type` - used to retrieve custom post types
+
 = Response =
 
     {
@@ -265,6 +272,7 @@ Returns a single page object.
 = Optional arguments =
 
 * `children` - set to a non-empty value to include a recursive hierarchy of child pages
+* `post_type` - used to retrieve custom post types
 
 = Response =
 
@@ -275,7 +283,7 @@ Returns a single page object.
 
 == Method: get_date_posts ==
 
-Returns an array of posts/pages in a specific category.
+Returns an array of posts/pages in a specific date archive (by day, month, or year).
 
 = One of the following is required =
 
@@ -914,7 +922,44 @@ The following are constants you can define in your `wp-config.php` folder:
 * `JSON_API_DIR` - set to the directory where JSON API plugin lives (in some cases this can be useful for `mu-plugins` with WordPress MU)
 * `JSON_API_CONTROLLERS` - a comma-separated list of default controllers to enable (this is overridden by the JSON API settings page)
 
+== 6. Unit tests ==
+
+JSON API comes with a set of tests that should make it easier to maintain and reveal incompatibilities when they might occur. This is an ongoing process, I hope to improve the test coverage going forward.
+
+== 6.1. Preparing a WordPress test site ==
+
+There are a few necessary steps that need to be carried out before the test suite will run properly.
+
+1. WordPress should generate a new set of tables before you start, so if you're testing with a `wp_` table prefix make sure the database has no existing tables of this kind
+2. Configure and install a new copy of WordPress
+3. Delete the Hello World post and Sample Page (titled "About" in some versions of WordPress)
+4. Enable user-friendly URLs from Settings > Permalinks, use the "Day and name" format
+5. Install the JSON API plugin and enable all bundled controllers from Settings > JSON API
+6. Import the [Theme Unit Test](http://codex.wordpress.org/Theme_Unit_Test) test data XML file from Settings > Import > WordPress (you will need to install the WordPress Importer plugin)
+
+== 6.2. Running the tests ==
+
+From the command line, make sure you have the HTTP_Client PEAR package installed:
+
+`pear install HTTP_Client`
+
+Change directory to `tests` and run the following:
+
+`pear run-tests`
+
+You should see the test results print out culminating in a summary:
+
+    TOTAL TIME: 00:04
+    23 PASSED TESTS
+    0 SKIPPED TESTS
+
 == Changelog ==
+
+= 1.0.7 (2011-01-27): =
+* Created some basic unit tests
+* Fixed a bug where `get_author_posts` was unable to find users by `slug`
+* Added missing `post_type` argument to documentation for `get_post` and `get_page` (props Koshirosan)
+* Added `previous_url` and `next_url` properties to the `get_post` response object (props mlcy44)
 
 = 1.0.6 (2011-01-13): =
 * Fixed a bug in `exclude` query parameter (big props to ikesyo and archon810)
@@ -1016,6 +1061,9 @@ The following are constants you can define in your `wp-config.php` folder:
 * Initial Public Release
 
 == Upgrade Notice ==
+
+= 1.0.7 =
+Minor bugfix/improvement release
 
 = 1.0.6 =
 Minor bugfix/improvement release
