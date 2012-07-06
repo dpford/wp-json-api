@@ -3,7 +3,7 @@ Contributors: dphiffer
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DH4MEG99JR2WE
 Tags: json, api, ajax, cms, admin, integration, moma
 Requires at least: 2.8
-Tested up to: 3.1
+Tested up to: 3.4.1
 Stable tag: 1.0.7
 
 A RESTful API for WordPress
@@ -953,7 +953,23 @@ You should see the test results print out culminating in a summary:
     23 PASSED TESTS
     0 SKIPPED TESTS
 
+== TODO for 1.0.8 ==
+* Support for custom post types
+* Support for custom taxonomies
+* Flesh out get_posts method
+* Redo tests using more specific criteria
+* Document all changes here
+* Search email + forum for other potential improvements
+
 == Changelog ==
+
+= 1.0.8 (tbd): =
+* Added a widgets controller
+* Added a generic `get_posts` method to the core controller
+* Added a `thumbnail_images` object property to complement `thumbnail` URL
+* Attachment image files are now checked to exist and match the expected width/height
+* Fixed a bug where `the_excerpt` filter wasn't being applied to the `excerpt` property
+* Fixed a bug where the number of child pages was being limited to 5
 
 = 1.0.7 (2011-01-27): =
 * Created some basic unit tests
@@ -1061,6 +1077,9 @@ You should see the test results print out culminating in a summary:
 * Initial Public Release
 
 == Upgrade Notice ==
+
+= 1.0.8 =
+Long overdue bugfix/improvement release
 
 = 1.0.7 =
 Minor bugfix/improvement release
