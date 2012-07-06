@@ -42,6 +42,20 @@ class JSON_API_Core_Controller {
     return $this->posts_result($posts);
   }
   
+  public function get_posts() {
+    global $json_api;
+    extract($json_api->query->get(array('meta_key', 'meta_value')));
+    $query = array();
+    if ($meta_key) {
+      $query['meta_key'] = $meta_key;
+    }
+    if ($meta_value) {
+      $query['meta_value'] = $meta_value;
+    }
+    $posts = $json_api->introspector->get_posts($query);
+    return $this->posts_result($posts);
+  }
+  
   public function get_post() {
     global $json_api, $post;
     extract($json_api->query->get(array('id', 'slug', 'post_id', 'post_slug')));
