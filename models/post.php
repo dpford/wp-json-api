@@ -136,7 +136,7 @@ class JSON_API_Post {
     $this->set_value('title', get_the_title($this->id));
     $this->set_value('title_plain', strip_tags(@$this->title));
     $this->set_content_value();
-    $this->set_value('excerpt', get_the_excerpt());
+    $this->set_value('excerpt', apply_filters('the_excerpt', get_the_excerpt()));
     $this->set_value('date', get_the_time($date_format));
     $this->set_value('modified', date($date_format, strtotime($wp_post->post_modified)));
     $this->set_categories_value();
@@ -246,6 +246,14 @@ class JSON_API_Post {
     $thumbnail_size = $this->get_thumbnail_size();
     list($thumbnail) = wp_get_attachment_image_src($attachment_id, $thumbnail_size);
     $this->thumbnail = $thumbnail;
+    
+    $attachments = $json_api->introspector->get_attachments($this->id);
+    foreach ($attachments as $attachment) {
+      if ($attachment->id == $attachment_id) {
+        $this->thumbnail_images = $attachment->images;
+        break;
+      }
+    }
   }
   
   function set_custom_fields_value() {
