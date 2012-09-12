@@ -43,6 +43,7 @@ class JSON_API {
         $this->response->setup();
         
         // Run action hooks for method
+        do_action("json_api", $controller, $method);
         do_action("json_api-{$controller}-$method");
         
         // Error out if nothing is found
