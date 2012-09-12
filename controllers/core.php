@@ -44,13 +44,19 @@ class JSON_API_Core_Controller {
   
   public function get_posts() {
     global $json_api;
-    extract($json_api->query->get(array('meta_key', 'meta_value')));
+    extract($json_api->query->get(array('meta_key', 'meta_value', 'parent_id', 'post_type')));
     $query = array();
     if ($meta_key) {
       $query['meta_key'] = $meta_key;
     }
     if ($meta_value) {
       $query['meta_value'] = $meta_value;
+    }
+    if (isset($_REQUEST['parent_id'])) {
+      $query['post_parent'] = $parent_id;
+    }
+    if ($post_type) {
+      $query['post_type'] = $post_type;
     }
     $posts = $json_api->introspector->get_posts($query);
     return $this->posts_result($posts);
@@ -253,10 +259,12 @@ class JSON_API_Core_Controller {
   public function get_page_index() {
     global $json_api;
     $pages = array();
+    $post_type = $json_api->query->post_type ? $json_api->query->post_type : 'page';
+    
     // Thanks to blinder for the fix!
     $numberposts = empty($json_api->query->count) ? -1 : $json_api->query->count;
     $wp_posts = get_posts(array(
-      'post_type' => 'page',
+      'post_type' => $post_type,
       'post_parent' => 0,
       'order' => 'ASC',
       'orderby' => 'menu_order',
