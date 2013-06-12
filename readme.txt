@@ -54,10 +54,10 @@ See the [Other Notes](http://wordpress.org/extend/plugins/json-api/other_notes/)
 5. [Extending JSON API](#5.-Extending-JSON-API)  
    5.1. [Plugin hooks](#5.1.-Plugin-hooks)  
    5.2. [Developing JSON API controllers](#5.2.-Developing-JSON-API-controllers)  
-   5.3. [Configuration options](#5.3.-Configuration-options)
-6. [Unit tests](#6.-Unit-tests)
-   6.1. [Preparing a WordPress test site](#6.1.-Preparing-a-WordPress-test-site)
-   6.2. [Running the tests](#6.2.-Running-the-tests)
+   5.3. [Configuration options](#5.3.-Configuration-options)  
+6. [Unit tests](#6.-Unit-tests)  
+   6.1. [Preparing a WordPress test site](#6.1.-Preparing-a-WordPress-test-site)  
+   6.2. [Running the tests](#6.2.-Running-the-tests)  
 
 == 1. General Concepts ==
 
