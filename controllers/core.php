@@ -44,22 +44,18 @@ class JSON_API_Core_Controller {
   
   public function get_posts() {
     global $json_api;
-    extract($json_api->query->get(array('meta_key', 'meta_value', 'parent_id', 'post_type')));
-    $query = array();
-    if ($meta_key) {
-      $query['meta_key'] = $meta_key;
-    }
-    if ($meta_value) {
-      $query['meta_value'] = $meta_value;
-    }
-    if (isset($_REQUEST['parent_id'])) {
-      $query['post_parent'] = $parent_id;
-    }
-    if ($post_type) {
-      $query['post_type'] = $post_type;
-    }
+    $url = parse_url($_SERVER['REQUEST_URI']);
+    $defaults = array(
+      'ignore_sticky_posts' => true
+    );
+    $query = wp_parse_args($url['query']);
+    unset($query['json']);
+    unset($query['post_status']);
+    $query = array_merge($defaults, $query);
     $posts = $json_api->introspector->get_posts($query);
-    return $this->posts_result($posts);
+    $result = $this->posts_result($posts);
+    $result['query'] = $query;
+    return $result;
   }
   
   public function get_post() {
