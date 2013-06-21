@@ -67,8 +67,8 @@ class JSON_API_Introspector {
     return $this->month_archives["$year$month"];
   }
   
-  public function get_categories() {
-    $wp_categories = get_categories();
+  public function get_categories($args = null) {
+    $wp_categories = get_categories($args);
     $categories = array();
     foreach ($wp_categories as $wp_category) {
       if ($wp_category->term_id == 1 && $wp_category->slug == 'uncategorized') {

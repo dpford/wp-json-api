@@ -208,7 +208,13 @@ class JSON_API_Core_Controller {
   
   public function get_category_index() {
     global $json_api;
-    $categories = $json_api->introspector->get_categories();
+    $args = null;
+    if (!empty($json_api->query->parent)) {
+      $args = array(
+        'parent' => $json_api->query->parent
+      );
+    }
+    $categories = $json_api->introspector->get_categories($args);
     return array(
       'count' => count($categories),
       'categories' => $categories
