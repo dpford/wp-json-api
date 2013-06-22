@@ -189,7 +189,7 @@ class JSON_API {
                 <?php
                 
                 foreach($info['methods'] as $method) {
-                  $url = $this->get_method_url($controller, $method, array('dev' => 1));
+                  $url = $this->get_method_url($controller, $method);
                   if ($active) {
                     echo "<code><a href=\"$url\">$method</a></code> ";
                   } else {
