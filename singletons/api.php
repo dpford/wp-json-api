@@ -21,6 +21,10 @@ class JSON_API {
     
     if ($controller) {
       
+      if (empty($this->query->dev)) {
+        error_reporting(0);
+      }
+      
       if (!in_array($controller, $active_controllers)) {
         $this->error("Unknown controller '$controller'.");
       }
