@@ -247,11 +247,15 @@ class JSON_API_Post {
       return;
     }
     $thumbnail_size = $this->get_thumbnail_size();
-    $this->thumbnail_size = $thumbnail_size;
+    $this->thumbnail->alt_text = get_post_meta($attachment_id, '_wp_attachment_image_alt', true);
+    $this->thumbnail->size = $thumbnail_size;
     $attachment = $json_api->introspector->get_attachment($attachment_id);
+    $thumbnail_object = get_post($attachment_id);
+    $this->thumbnail->caption = $thumbnail_object->post_exceprt;
+    $this->thumbnail->description = $thumbnail_object->post_content;
     $image = $attachment->images[$thumbnail_size];
-    $this->thumbnail = $image->url;
-    $this->thumbnail_images = $attachment->images;
+    $this->thumbnail->thumbnail = $image->url;
+    $this->thumbnail->images = $attachment->images;
   }
   
   function set_custom_fields_value() {
