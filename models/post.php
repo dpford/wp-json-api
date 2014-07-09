@@ -283,11 +283,12 @@ class JSON_API_Post {
   
   function set_custom_taxonomies($type) {
     global $json_api;
-    $taxonomies = get_taxonomies(array(
-      'object_type' => array($type),
-      'public'   => true,
-      '_builtin' => false
-    ), 'objects');
+    // $taxonomies = get_taxonomies(array(
+    //   'object_type' => array($type),
+    //   'public'   => true,
+    //   '_builtin' => false
+    // ), 'objects');
+    $taxonomies = get_object_taxonomies( $type, $output = 'objects' );
     foreach ($taxonomies as $taxonomy_id => $taxonomy) {
       $taxonomy_key = "taxonomy_$taxonomy_id";
       if (!$json_api->include_value($taxonomy_key)) {
