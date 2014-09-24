@@ -139,6 +139,8 @@ class JSON_API_Post {
     $this->set_content_value();
     $this->set_value('dek', $post->post_excerpt);
     $this->set_value('excerpt', apply_filters('the_excerpt', get_the_excerpt()));
+    $this->set_value('order', $wp_post->menu_order);
+    $this->set_value('parent', $wp_post->post_parent);
     $this->set_value('date', get_the_time($date_format));
     $this->set_value('modified', date($date_format, strtotime($wp_post->post_modified)));
     $this->set_categories_value();
